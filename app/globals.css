@@ -492,6 +492,47 @@ html.has-motion .reveal.is-in .icon-line rect, html.has-motion .reveal.is-in .ic
 .sec-head-row { display: flex; align-items: flex-end; justify-content: space-between; gap: var(--s-3); }
 .sec-head-row img { width: clamp(64px, 7vw, 96px); flex: none; }
 
+/* glass cards over soft colour orbs, so the blur has something to catch (phones only) */
+.you-will { background: var(--paper); }
+.glass-orbs { display: none; position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+.glass-orbs i {
+  position: absolute;
+  width: 42vw; max-width: 560px; aspect-ratio: 1;
+  border-radius: 50%;
+  filter: blur(70px);
+  opacity: .55;
+  animation: orb 18s var(--ease) infinite alternate;
+}
+.glass-orbs i:nth-child(1) { left: -10%; top: 10%; background: var(--sacral); }
+.glass-orbs i:nth-child(2) { right: -8%; top: 30%; background: var(--solar); animation-delay: -6s; }
+.glass-orbs i:nth-child(3) { left: 30%; bottom: -20%; background: var(--clay); opacity: .35; animation-delay: -12s; }
+@keyframes orb { from { transform: translate3d(0, 0, 0) scale(1); } to { transform: translate3d(6%, -8%, 0) scale(1.12); } }
+.card--glass {
+  position: relative;
+  background: rgba(255, 253, 248, .42);
+  border: 1px solid rgba(255, 255, 255, .7);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .8),
+    0 20px 50px -30px rgba(29, 33, 23, .35);
+  backdrop-filter: blur(18px) saturate(1.4);
+  -webkit-backdrop-filter: blur(18px) saturate(1.4);
+}
+.card--glass::before {
+  content: "";
+  position: absolute; inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(135deg, rgba(255, 255, 255, .5), rgba(255, 255, 255, 0) 45%);
+}
+.card--glass > * { position: relative; }
+.card--glass:hover { background: rgba(255, 253, 248, .58); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .9), 0 28px 60px -30px rgba(29, 33, 23, .45); }
+.card--glass .d3 { color: var(--ink); }
+.card--glass .body { color: var(--ink-2); }
+.card--glass-cta { background: color-mix(in srgb, var(--sacral) 78%, transparent); border-color: rgba(255, 255, 255, .45); color: #fff; }
+.card--glass-cta:hover { background: color-mix(in srgb, var(--sacral) 88%, transparent); }
+.card--glass-cta .d3 { color: #fff; }
+.card--glass-cta .body { color: rgba(255, 255, 255, .88); }
+
 /* ============================================================
    §4 FLOW — ink, all seven discs
    ============================================================ */
@@ -713,7 +754,7 @@ html.has-motion .reveal.is-in { opacity: 1; transform: none; }
   html { scroll-behavior: auto; }
   .reveal, .reveal .headline .hw, .hl::after { opacity: 1; transform: none; transition: none; }
   .reveal .icon-line * { stroke-dashoffset: 0 !important; }
-  .hero-float, .hero-ball, .hero-cast, .hero-gloss::before, .disc-figure img, .badge--live::before { animation: none; }
+  .hero-float, .hero-ball, .hero-cast, .hero-gloss::before, .glass-orbs i, .disc-figure img, .badge--live::before { animation: none; }
   .btn::after { display: none; }
 }
 
@@ -765,10 +806,11 @@ html.has-motion .reveal.is-in { opacity: 1; transform: none; }
   .sticky-bar { display: flex; }
   body { padding-bottom: 72px; }
 
-  /* the conversations become a swipe rail instead of one very long column */
+  /* the conversations become a simple swipe rail instead of one very long column */
   .wall {
     columns: auto;
     display: flex;
+    align-items: flex-start;
     gap: var(--s-2);
     overflow-x: auto;
     scroll-snap-type: x mandatory;
@@ -791,33 +833,43 @@ html.has-motion .reveal.is-in { opacity: 1; transform: none; }
 
   /* the promise cards pile up as you scroll: each one sticks a little lower
      than the last, so the stack is visible while the next slides in */
-  .stack { gap: var(--s-3); padding-bottom: var(--s-3); }
+  .you-will { padding-block: var(--s-7) var(--s-7); }
+  .you-will .glass-orbs { display: block; }
+  .stack { gap: var(--s-4); padding-bottom: var(--s-4); }
   /* the heading pins under the header and the cards stack beneath it */
   .stack-head {
     position: sticky;
-    top: var(--header-h);
+    top: calc(var(--header-h) + var(--s-2));
     z-index: 2;
     flex-direction: row;
     align-items: center;
     justify-content: flex-start;
+    gap: var(--s-2);
     text-align: left;
-    margin-inline: calc(var(--gutter) * -1);
-    padding: var(--s-2) var(--gutter);
-    background: color-mix(in srgb, var(--paper) 92%, transparent);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    margin: 0;
+    padding: var(--s-2) var(--s-3);
+    border-radius: 18px;
+    border: 1px solid rgba(255, 255, 255, .7);
+    background: color-mix(in srgb, var(--paper) 88%, transparent);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 10px 30px -22px rgba(29, 33, 23, .4);
   }
   .stack-head .sec-head { gap: 4px; justify-items: start; }
-  .stack-head .d2 { font-size: 1.7rem; }
+  .stack-head .d2 { font-size: 1.6rem; }
   .stack-head img { width: 44px; }
-  .stack-head + .stack { margin-top: var(--s-3); }
+  .stack-head + .stack { margin-top: var(--s-4); }
   .stack > .card {
     position: sticky;
-    top: calc(var(--header-h) + var(--stack-head, 132px) + var(--i, 0) * 14px);
-    min-height: 220px;
+    top: calc(var(--header-h) + var(--s-2) + var(--stack-head, 96px) + var(--s-2) + var(--i, 0) * 14px);
+    min-height: 240px;
+    padding: var(--s-4) var(--s-3);
+    gap: var(--s-2);
     box-shadow: 0 -8px 30px -18px rgba(29, 33, 23, .45);
   }
   .stack > .card:hover { transform: none; }
+  .stack > .card--glass { background: rgba(255, 253, 248, .78); }
+  .stack > .card--glass-cta { background: color-mix(in srgb, var(--sacral) 92%, transparent); }
   .brand img { width: 34px; height: 34px; }
   .brand-name { font-size: 1rem; }
   .grid--3 { grid-template-columns: 1fr; }

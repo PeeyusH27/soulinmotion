@@ -83,6 +83,7 @@ const CHATS: { who: string; sub: string; note: string; msgs: Msg[] }[] = [
 
 const initials = (name: string) => name.charAt(0);
 
+
 export default function Testimonials() {
   return (
     <section
@@ -117,7 +118,7 @@ export default function Testimonials() {
             </figcaption>
           </figure>
 
-          {CHATS.map((chat) => (
+          {CHATS.map((chat, i) => (
             <article className="chat reveal" key={chat.who}>
               <div className="chat-bar">
                 <span className="chat-ava">{initials(chat.who)}</span>

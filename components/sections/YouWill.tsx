@@ -18,10 +18,11 @@ const SACRAL = CHAKRAS[1];
 export default function YouWill() {
   return (
     <section
-      className="sec tint"
+      className="sec you-will"
       id="you-will"
       style={{ '--tint': 'var(--sacral)', '--tint-x': '100%', '--tint-y': '0%' } as React.CSSProperties}
     >
+      <span className="glass-orbs" aria-hidden="true"><i /><i /><i /></span>
       <div className="wrap">
         <StackMeasure />
         <div className="sec-head-row stack-head reveal">
@@ -36,7 +37,7 @@ export default function YouWill() {
         <div className="grid grid--3 stack">
           {ITEMS.map(({ Icon, title, text }, i) => (
             <div
-              className="card card--tint reveal"
+              className="card card--glass reveal"
               data-delay={(i % 3) + 1}
               style={{ '--i': i } as React.CSSProperties}
               key={title}
@@ -46,7 +47,7 @@ export default function YouWill() {
               <p className="body">{text}</p>
             </div>
           ))}
-          <div className="card card--solid reveal" data-delay="3" style={{ '--i': 5 } as React.CSSProperties}>
+          <div className="card card--glass card--glass-cta reveal" data-delay="3" style={{ '--i': 5 } as React.CSSProperties}>
             <h3 className="d3">Ready to see it for yourself?</h3>
             <p className="body">Seats are limited so the session stays intimate.</p>
             <div style={{ marginTop: 'var(--s-2)' }}>
