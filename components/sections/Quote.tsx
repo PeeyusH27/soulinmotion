@@ -1,30 +1,23 @@
-/**
- * A full-bleed image band. The photograph scales and un-skews as the section
- * crosses the viewport (driven from Motion), with the line set on glass.
- */
+import { CHAKRAS } from '@/lib/chakras';
+
+const HEART = CHAKRAS[3];
+
+/** §5 — heart chakra wash; the brand's own colour instead of a stock photo. */
 export default function Quote() {
   return (
-    <section className="scene" id="shift">
-      <div className="scene-media" data-scene>
+    <section
+      className="sec quote-band tint"
+      id="shift"
+      style={{ '--tint': 'var(--heart)', '--tint-x': '50%', '--tint-y': '50%' } as React.CSSProperties}
+    >
+      <div className="wrap reveal">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src="https://images.unsplash.com/photo-1499209974431-9dddcece7f88?auto=format&fit=crop&w=2000&q=80"
-          alt=""
-          aria-hidden="true"
-        />
-      </div>
-      <span className="scene-veil" aria-hidden="true" />
-
-      <div className="wrap scene-inner">
-        <figure className="glass reveal">
-          <span className="kicker">One simple shift can change everything</span>
-          <blockquote>
-            Freedom begins when you stop trying to fix your life and start seeing the patterns that
-            create it.
-          </blockquote>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img className="glass-mark" src="/brand/emblem.png" alt="" aria-hidden="true" />
-        </figure>
+        <img className="disc" src={HEART.file} alt="" aria-hidden="true" />
+        <span className="kicker">One simple shift can change everything</span>
+        <blockquote>
+          “Freedom begins when you stop trying to fix your life and start seeing the patterns that
+          create it.”
+        </blockquote>
       </div>
     </section>
   );

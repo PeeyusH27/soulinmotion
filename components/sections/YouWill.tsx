@@ -1,103 +1,57 @@
-'use client';
-
 import Headline from '../Headline';
-import { useEffect, useRef, useState } from 'react';
+import RegisterButton from '../RegisterButton';
+import StackMeasure from '../StackMeasure';
 import { BrainIcon, EyeIcon, FunnelIcon, LotusIcon, MeditateIcon } from '../Icons';
+import { CHAKRAS } from '@/lib/chakras';
 
 const ITEMS = [
-  { Icon: EyeIcon, text: 'See how your mind creates your reality' },
-  { Icon: BrainIcon, text: 'Understand the patterns that keep you stuck' },
-  { Icon: FunnelIcon, text: 'Discover your mental filters and beliefs' },
-  { Icon: LotusIcon, text: 'Experience the wisdom of chakras & inner energy' },
-  { Icon: MeditateIcon, text: 'Practice awareness that brings clarity, freedom & flow' },
+  { Icon: EyeIcon, title: 'See how your mind creates your reality', text: 'Recognise the thoughts and beliefs that keep repeating in your life.' },
+  { Icon: BrainIcon, title: 'Understand the patterns that keep you stuck', text: 'Move from automatic reactions toward more conscious choices.' },
+  { Icon: FunnelIcon, title: 'Discover your mental filters and beliefs', text: 'See the conditioning behind how you perceive yourself and others.' },
+  { Icon: LotusIcon, title: 'Experience the wisdom of chakras & inner energy', text: 'A framework for self-awareness, balance and inner exploration.' },
+  { Icon: MeditateIcon, title: 'Practice awareness that brings clarity, freedom & flow', text: 'A guided chakra meditation to close the session.' },
 ];
 
-const DWELL = 5200; // ms on each item before it advances
+const SACRAL = CHAKRAS[1];
 
+/** §3 — sacral chakra: feeling and flow. Every promise visible at once. */
 export default function YouWill() {
-  const [active, setActive] = useState(0);
-  const [swapping, setSwapping] = useState(false);
-  const [progress, setProgress] = useState(0);
-  const paused = useRef(false);
-  const started = useRef<number | null>(null);
-
-  /* advance on a timer, with the bar showing how long is left */
-  useEffect(() => {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-
-    let raf = 0;
-    const tick = (now: number) => {
-      if (started.current === null) started.current = now;
-      if (paused.current) started.current = now - progress * DWELL;
-
-      const p = Math.min((now - started.current) / DWELL, 1);
-      setProgress(p);
-
-      if (p >= 1) {
-        started.current = now;
-        setSwapping(true);
-        window.setTimeout(() => {
-          setActive((v) => (v + 1) % ITEMS.length);
-          setSwapping(false);
-        }, 190);
-      }
-      raf = requestAnimationFrame(tick);
-    };
-
-    raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
-    // progress is read through a ref-like pattern; re-running on it would reset the timer
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [active]);
-
-  const select = (i: number) => {
-    if (i === active) return;
-    started.current = null;
-    setProgress(0);
-    setSwapping(true);
-    window.setTimeout(() => { setActive(i); setSwapping(false); }, 160);
-  };
-
-  const Current = ITEMS[active].Icon;
-
   return (
-    <section className="sec band band-line" id="experience">
+    <section
+      className="sec tint"
+      id="you-will"
+      style={{ '--tint': 'var(--sacral)', '--tint-x': '100%', '--tint-y': '0%' } as React.CSSProperties}
+    >
       <div className="wrap">
-        <div className="sec-head reveal">
-          <span className="kicker kicker--sage">Ninety minutes, live</span>
-          <Headline text="In this webinar you will…" mark={['will']} />
+        <StackMeasure />
+        <div className="sec-head-row stack-head reveal">
+          <div className="sec-head">
+            <span className="kicker">In 90 minutes</span>
+            <Headline text="In this webinar you will…" mark={['will…']} />
+          </div>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={SACRAL.file} alt="" aria-hidden="true" />
         </div>
 
-        <div
-          className={`show${swapping ? ' is-swapping' : ''}`}
-          onPointerEnter={() => { paused.current = true; }}
-          onPointerLeave={() => { paused.current = false; }}
-        >
-          <div className="show-stage reveal">
-            <span className="show-ghost" aria-hidden="true">
-              {String(active + 1).padStart(2, '0')}
-            </span>
-            <span className="show-icon show-swap">
-              <Current />
-            </span>
-            <p className="show-text show-swap">{ITEMS[active].text}</p>
-          </div>
-
-          <div className="show-list reveal" data-delay="1">
-            {ITEMS.map((item, i) => (
-              <button
-                key={item.text}
-                className={`show-row${i === active ? ' is-active' : ''}`}
-                onClick={() => select(i)}
-                aria-current={i === active}
-              >
-                <span className="n">{String(i + 1).padStart(2, '0')}</span>
-                <p>{item.text}</p>
-                <span className="show-bar" aria-hidden="true">
-                  <i style={{ '--p': i === active ? progress : 0 } as React.CSSProperties} />
-                </span>
-              </button>
-            ))}
+        <div className="grid grid--3 stack">
+          {ITEMS.map(({ Icon, title, text }, i) => (
+            <div
+              className="card card--tint reveal"
+              data-delay={(i % 3) + 1}
+              style={{ '--i': i } as React.CSSProperties}
+              key={title}
+            >
+              <Icon />
+              <h3 className="d3">{title}</h3>
+              <p className="body">{text}</p>
+            </div>
+          ))}
+          <div className="card card--solid reveal" data-delay="3" style={{ '--i': 5 } as React.CSSProperties}>
+            <h3 className="d3">Ready to see it for yourself?</h3>
+            <p className="body">Seats are limited so the session stays intimate.</p>
+            <div style={{ marginTop: 'var(--s-2)' }}>
+              <RegisterButton tone="ink">Save my seat</RegisterButton>
+            </div>
           </div>
         </div>
       </div>

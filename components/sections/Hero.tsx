@@ -1,22 +1,12 @@
-import Link from 'next/link';
 import HeroMark from '../HeroMark';
-import { ArrowRight, CalendarIcon, ClockIcon, GlobeIcon } from '../Icons';
-
-const DETAILS = [
-  { Icon: CalendarIcon, label: 'Date · Coming soon' },
-  { Icon: ClockIcon, label: '90 minutes' },
-  { Icon: GlobeIcon, label: 'Live on Zoom' },
-];
+import Badge, { EventBadges } from '../Badge';
+import RegisterButton from '../RegisterButton';
 
 export default function Hero() {
   return (
     <section className="hero" id="home">
-      <div className="hero-bg parallax" data-speed="0.08" />
-
       <div className="wrap hero-grid">
         <div className="hero-copy">
-          <span className="eyebrow reveal">Live webinar</span>
-
           <h1 className="d1 reveal" data-delay="1">
             <span className="line">See clearly.</span>
             <span className="line">Question deeply.</span>
@@ -28,22 +18,18 @@ export default function Hero() {
             the chakras.
           </p>
 
-          <div className="hero-chips reveal" data-delay="3">
-            {DETAILS.map(({ Icon, label }) => (
-              <span className="chip chip--glass" key={label}>
-                <Icon />
-                {label}
-              </span>
-            ))}
+          <div className="hero-cta reveal" data-delay="3">
+            <RegisterButton size="lg">Reserve your spot</RegisterButton>
           </div>
 
-          <div className="hero-cta reveal" data-delay="4">
-            <Link className="btn" href="#booking">
-              Reserve your spot
-              <ArrowRight />
-            </Link>
-            <span className="hero-note">Limited seats only</span>
+          <div className="badges reveal" data-delay="4">
+            <Badge kind="seats">Limited seats only</Badge>
+            <EventBadges />
           </div>
+
+          <p className="hero-fine reveal" data-delay="5">
+            Registration takes about a minute · The Zoom link arrives by email
+          </p>
         </div>
 
         <div className="hero-art reveal" data-delay="2">

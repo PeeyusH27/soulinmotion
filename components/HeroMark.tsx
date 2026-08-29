@@ -194,7 +194,6 @@ export default function HeroMark() {
 
   return (
     <div className="hero-mark" ref={wrap}>
-      <span className="hero-aura" aria-hidden="true" />
       <span className="hero-cast" aria-hidden="true" />
       <span className="hero-float">
         {/* the ball: emblem surface, then the glass that sits on top of it */}
@@ -202,12 +201,10 @@ export default function HeroMark() {
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/brand/emblem.png" alt="Soul in Motion" draggable={false} />
           <span className="hero-shade" aria-hidden="true" />
-          <span className="hero-spec" aria-hidden="true" />
           <span className="hero-gloss" aria-hidden="true" />
           <span className="hero-rim" aria-hidden="true" />
         </span>
       </span>
-      <span className="hero-halo" aria-hidden="true" />
     </div>
   );
 }

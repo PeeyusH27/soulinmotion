@@ -2,12 +2,14 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
+import ChakraRail from './ChakraRail';
+import RegisterButton from './RegisterButton';
 
 const NAV = [
   { label: 'The webinar', href: '#about' },
-  { label: 'Chakras', href: '#chakras' },
-  { label: 'Flow', href: '#flow' },
-  { label: 'Host', href: '#host' },
+  { label: 'The flow', href: '#flow' },
+  { label: 'Your host', href: '#host' },
+  { label: 'FAQ', href: '#register' },
 ];
 
 export default function Header() {
@@ -31,18 +33,19 @@ export default function Header() {
           ))}
         </nav>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <Link className="btn btn--sm header-cta" href="#booking">Reserve your spot</Link>
+        <div className="header-actions">
+          <RegisterButton size="sm">Register</RegisterButton>
           <button
             className="nav-toggle"
             aria-label="Menu"
             aria-expanded={open}
             onClick={() => setOpen((v) => !v)}
           >
-            <span /><span />
+            <span /><span /><span />
           </button>
         </div>
       </div>
+      <ChakraRail />
     </header>
   );
 }

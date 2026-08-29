@@ -10,47 +10,49 @@ npm install
 npm run dev      # http://localhost:3000
 ```
 
-## Slot booking (Calendly)
+## Registration (Google Form)
 
-The booking section embeds a Calendly inline widget. Point it at your event:
+Every register button on the page opens the same Google Form, and the
+register section embeds it. Point it at your form:
 
 ```bash
 cp .env.example .env.local
-# NEXT_PUBLIC_CALENDLY_URL=https://calendly.com/<account>/<event>
+# NEXT_PUBLIC_REGISTER_URL=https://docs.google.com/forms/d/e/<id>/viewform
 ```
 
-Until that is set the panel says so rather than rendering an empty widget.
-Widget colours are themed to the palette in `components/sections/Booking.tsx`.
+Until that is set the buttons scroll to the register section, which says what
+is missing. The URL is read in `lib/register.ts`.
 
 ## Structure
 
 ```
 app/
-  layout.tsx    fonts (Fraunces · Inter · JetBrains Mono), metadata, Motion mount
-  globals.css   the design system — sage / terracotta / paper, taken from the mark
-  page.tsx      section order
+  layout.tsx    fonts (Fraunces · Manrope · JetBrains Mono), metadata, Motion mount
+  globals.css   the design system — ink / paper / terracotta / gold, plus one
+                chakra tint per section (root → crown)
+  page.tsx      section order and the three promo strips
 components/
-  Header  Footer  Motion  Icons
+  Header          sticky, register button at every width, chakra progress rail
+  Footer          nav + register link
+  RegisterButton  the single register action (opens the form in a new tab)
+  PromoStrip      gold / ink reminder strip between sections
+  Badge           live · seats · zoom · time · date pills
+  StickyBar       mobile bottom bar; hides while the register section is visible
+  ChakraRail      seven segments under the header that light up as you scroll
+  Motion  HeroMark  Headline  Icons
   sections/
-    Hero            large left-hand type, detail chips, booking CTA, lotus mark
-    Patterns        the "for you if…" rows beside a sticky chakra ring on wide
-                    screens; the two stack below 1100px
-    ChakraRing      the seven discs on a turning ring — drag to spin, click a
-                    disc to bring it forward. variant="panel" for the pair
-    YouWill         "In this webinar you will…" — auto-advancing showcase
-    Flow            the seven steps ride sideways while the section is pinned;
-                    a swipeable snap track on touch
-    Shifts          what actually changes, plus the one-line transformation
-    Quote           full-bleed image that scales and un-skews on scroll, with
-                    the line set on frosted glass
-    LiveExperience  the live experience + you will walk away with
-    Host            dark band with an arched portrait and a detail table
-    WhyMe           the host's own story, told as editorial copy
-    Testimonials    scroll-driven card stack (placeholder copy)
-    Faq             seven questions, accordion
-    Booking         details, contact and the Calendly slot picker
-    FinalCta        the closing terracotta block
+    Hero            badges, large headline, register button, the lotus mark
+    Patterns        §2 "for you if…" checklist beside the root disc
+    YouWill         §3 five promise cards + a register card (sacral)
+    Flow            §4 seven steps on ink, each numbered by its chakra disc
+    Quote           §5 the line on a heart-green wash
+    LiveExperience  §6 the live experience (throat) + walk away with (sage)
+    Testimonials    §7 real WhatsApp messages as chat cards (solar plexus)
+    Host            §8 portrait, specialisms and the host's story (ajna)
+    Register        §9 Google Form button + embed, event badges, FAQ
+    FinalCta        §10 crown on ink, the largest button on the page
 lib/chakras.ts    typed manifest for the chakra assets
+lib/register.ts   the form URL and its embed variant
 ```
 
 ## Assets

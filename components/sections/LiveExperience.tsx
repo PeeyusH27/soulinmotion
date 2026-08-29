@@ -1,51 +1,57 @@
 import Headline from '../Headline';
-import {
-  BodyIcon, EnergyIcon, IdentityIcon, InnerSelfIcon, JourneyIcon,
-  PatternIcon, ShiftIcon, SpeechClarityIcon, SystemIcon,
-} from '../Icons';
+import RegisterButton from '../RegisterButton';
+import { Check } from '../Icons';
 
 const EXPERIENCE = [
-  { Icon: SystemIcon, text: 'Understand your inner system' },
-  { Icon: PatternIcon, text: 'See your patterns' },
-  { Icon: BodyIcon, text: 'Explore mind, chakras and body' },
-  { Icon: IdentityIcon, text: 'Exercise to shift your identity' },
-  { Icon: JourneyIcon, text: 'Interactive transformation journey' },
+  'Understand your inner system',
+  'See your patterns',
+  'Explore mind, chakras and body',
+  'Exercise to shift your identity',
+  'Interactive transformation journey',
 ];
 
 const WALK_AWAY = [
-  { Icon: SpeechClarityIcon, text: 'Clarity about your thoughts and patterns' },
-  { Icon: ShiftIcon, text: 'Tools to shift your mindset and emotions' },
-  { Icon: InnerSelfIcon, text: 'A deeper connection with your inner self' },
-  { Icon: EnergyIcon, text: 'Renewed energy, balance and direction in life' },
+  'Clarity about your thoughts and patterns',
+  'Tools to shift your mindset and emotions',
+  'A deeper connection with your inner self',
+  'Renewed energy, balance and direction in life',
 ];
 
+/** §6 — throat (voice, interaction) for the live session; sage for what you keep. */
 export default function LiveExperience() {
   return (
     <section className="sec" id="live">
       <div className="wrap split">
-        <div className="reveal">
-          <span className="kicker">On the day</span>
-          <Headline text="The live experience" mark={['live']} className="d3" />
-          <ol className="list-rows">
-            {EXPERIENCE.map((item, i) => (
-              <li key={item.text}>
-                <span className="n">0{i + 1}</span>
-                {item.text}
+        <div style={{ '--tint': 'var(--throat)' } as React.CSSProperties}>
+          <div className="sec-head reveal">
+            <span className="kicker">On the day</span>
+            <Headline text="The live experience" mark={['live']} />
+          </div>
+          <ol className="check-list">
+            {EXPERIENCE.map((text, i) => (
+              <li className="reveal" data-delay={i + 1} key={text}>
+                <span className="ck">{i + 1}</span>
+                {text}
               </li>
             ))}
           </ol>
         </div>
 
-        <div className="reveal" data-delay="1">
-          <span className="kicker kicker--sage">Afterwards</span>
-          <Headline text="You will walk away with" mark={['walk']} className="d3" />
-          <div className="away-grid">
-            {WALK_AWAY.map(({ Icon, text }) => (
-              <div className="away-tile" key={text}>
-                <Icon />
-                <p>{text}</p>
-              </div>
+        <div style={{ '--tint': 'var(--sage-d)' } as React.CSSProperties}>
+          <div className="sec-head reveal">
+            <span className="kicker">Afterwards</span>
+            <Headline text="You will walk away with" mark={['walk', 'away']} />
+          </div>
+          <ul className="check-list">
+            {WALK_AWAY.map((text, i) => (
+              <li className="reveal" data-delay={i + 1} key={text}>
+                <span className="ck"><Check /></span>
+                {text}
+              </li>
             ))}
+          </ul>
+          <div className="reveal" data-delay="5" style={{ marginTop: 'var(--s-3)' }}>
+            <RegisterButton>Save my seat</RegisterButton>
           </div>
         </div>
       </div>

@@ -1,29 +1,30 @@
 import type { Metadata } from 'next';
-import { Fraunces, Inter, JetBrains_Mono } from 'next/font/google';
+import { Fraunces, JetBrains_Mono, Manrope } from 'next/font/google';
 import Motion from '@/components/Motion';
 import './globals.css';
 
-/* Display: a soft modern serif, used light at large sizes. */
+/* Display: a soft serif, set at 500–600 so headlines carry weight. */
 const fraunces = Fraunces({
   subsets: ['latin'],
-  weight: ['300', '400', '500', '600'],
+  weight: 'variable',
   style: ['normal', 'italic'],
+  axes: ['SOFT', 'opsz'],
   variable: '--font-fraunces',
   display: 'swap',
 });
 
-/* UI: neutral, tight. */
-const inter = Inter({
+/* Body and buttons: round, wide, friendly at size. */
+const manrope = Manrope({
   subsets: ['latin'],
-  weight: ['400', '500', '600'],
-  variable: '--font-inter',
+  weight: ['400', '500', '600', '700', '800'],
+  variable: '--font-manrope',
   display: 'swap',
 });
 
-/* Micro-labels and indices. */
+/* Labels, badges, step numbers. */
 const mono = JetBrains_Mono({
   subsets: ['latin'],
-  weight: ['400', '500'],
+  weight: ['400', '500', '600'],
   variable: '--font-mono',
   display: 'swap',
 });
@@ -36,7 +37,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${fraunces.variable} ${inter.variable} ${mono.variable}`}>
+    <html lang="en" className={`${fraunces.variable} ${manrope.variable} ${mono.variable}`}>
       <body>
         {children}
         <Motion />

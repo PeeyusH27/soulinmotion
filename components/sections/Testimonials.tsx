@@ -85,14 +85,16 @@ const initials = (name: string) => name.charAt(0);
 
 export default function Testimonials() {
   return (
-    <section className="sec" id="voices">
+    <section
+      className="sec tint"
+      id="voices"
+      style={{ '--tint': 'var(--solar)', '--tint-x': '50%', '--tint-y': '0%' } as React.CSSProperties}
+    >
       <div className="wrap">
         <div className="sec-head sec-head--center reveal">
-          <span className="kicker">In their words</span>
+          <span className="kicker" style={{ color: 'var(--gold-d)' }}>In their words</span>
           <Headline text="Messages that arrived after" mark={['after']} />
-          <p className="lead" style={{ marginInline: 'auto', marginTop: 18 }}>
-            Unedited, straight from the conversations.
-          </p>
+          <p className="lead">Unedited, straight from the conversations.</p>
         </div>
 
         <div className="wall">
