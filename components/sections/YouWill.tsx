@@ -2,7 +2,6 @@ import Headline from '../Headline';
 import RegisterButton from '../RegisterButton';
 import StackMeasure from '../StackMeasure';
 import { BrainIcon, EyeIcon, FunnelIcon, LotusIcon, MeditateIcon } from '../Icons';
-import { CHAKRAS } from '@/lib/chakras';
 
 const ITEMS = [
   { Icon: EyeIcon, title: 'See how your mind creates your reality', text: 'Recognise the thoughts and beliefs that keep repeating in your life.' },
@@ -11,8 +10,6 @@ const ITEMS = [
   { Icon: LotusIcon, title: 'Experience the wisdom of chakras & inner energy', text: 'A framework for self-awareness, balance and inner exploration.' },
   { Icon: MeditateIcon, title: 'Practice awareness that brings clarity, freedom & flow', text: 'A guided chakra meditation to close the session.' },
 ];
-
-const SACRAL = CHAKRAS[1];
 
 /** §3 — sacral chakra: feeling and flow. Every promise visible at once. */
 export default function YouWill() {
@@ -30,8 +27,6 @@ export default function YouWill() {
             <span className="kicker">In 90 minutes</span>
             <Headline text="In this webinar you will…" mark={['will…']} />
           </div>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={SACRAL.file} alt="" aria-hidden="true" />
         </div>
 
         <div className="grid grid--3 stack">
