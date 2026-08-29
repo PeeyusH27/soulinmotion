@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Headline from '../Headline';
 import Badge, { EventBadges } from '../Badge';
 import RegisterButton from '../RegisterButton';
-import { EMBED_URL, HAS_FORM } from '@/lib/register';
+import { CAN_EMBED, EMBED_URL, HAS_FORM } from '@/lib/register';
 
 const FAQS = [
   {
@@ -71,9 +71,9 @@ export default function Register() {
           <RegisterButton size="lg" block>Register on Google Form</RegisterButton>
           <p className="form-fine">Opens in a new tab · about 60 seconds</p>
 
-          <div className="form-or">or fill it in right here</div>
+          {CAN_EMBED && <div className="form-or">or fill it in right here</div>}
 
-          {HAS_FORM ? (
+          {CAN_EMBED ? (
             <iframe
               className="form-embed"
               src={EMBED_URL}
@@ -82,7 +82,7 @@ export default function Register() {
             >
               Loading…
             </iframe>
-          ) : (
+          ) : HAS_FORM ? null : (
             <div className="form-missing">
               <b>Registration form not connected yet.</b>
               <span>
