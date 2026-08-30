@@ -49,7 +49,19 @@ export default function Motion() {
     // lets the screenshot helper size a full-page capture
     document.documentElement.dataset.pageHeight = String(document.body.scrollHeight);
 
-
+    /* TEMP-DEBUG: find CTAs whose label is being clipped by overflow:hidden */
+    window.setTimeout(() => {
+      const bad: string[] = [];
+      document.querySelectorAll<HTMLElement>('.btn').forEach((b) => {
+        const label = (b.textContent || '').trim().slice(0, 22);
+        const overX = b.scrollWidth - b.clientWidth;
+        const overY = b.scrollHeight - b.clientHeight;
+        if (overX > 1 || overY > 1) {
+          bad.push(`"${label}" ${b.className.replace(/\s+/g, '.')} dx=${overX} dy=${overY} w=${Math.round(b.clientWidth)}`);
+        }
+      });
+      document.documentElement.dataset.clip = bad.length ? bad.join(' ;; ') : 'none';
+    }, 900);
 
     return () => {
       window.clearTimeout(fallback);
