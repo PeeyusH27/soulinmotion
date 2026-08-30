@@ -39,18 +39,26 @@ components/
   Badge           live · seats · zoom · time · date pills
   StickyBar       mobile bottom bar; hides while the register section is visible
   ChakraRail      seven segments under the header that light up as you scroll
-  Motion  HeroMark  Headline  Icons
+  ChakraOrbit     the wheel: seven discs on a tilted circle that drifts on its
+                  own, takes a drag, carries a flick, and brings a tapped disc
+                  round to the front. Whatever ends up in front names itself
+                  underneath, so the label can never fall out of step.
+  Motion  Headline  Icons
   sections/
-    Hero            badges, large headline, register button, the lotus mark
-    Patterns        §2 "for you if…" checklist beside the root disc
-    YouWill         §3 five promise cards + a register card (sacral)
-    Flow            §4 seven steps on ink, each numbered by its chakra disc
-    Quote           §5 the line on a heart-green wash
-    LiveExperience  §6 the live experience (throat) + walk away with (sage)
-    Testimonials    §7 real WhatsApp messages as chat cards (solar plexus)
+    Hero            on ink — headline and CTAs left, the chakra wheel right,
+                    one hairline row of event detail, then the seven-step
+                    marquee. The header rides it transparently until it sticks.
+                    Folds to one column at 900px with the wheel leading.
+    Patterns        §2 "for you if…" written as scenes, + who it isn't for (root)
+    YouWill         §3 what we'll actually do — five deliverables (sacral)
+    Testimonials    §4 real WhatsApp messages as chat cards (solar plexus)
+    Flow            §5 seven steps on ink, timed, each on its chakra disc
+    Quote           §6 the line on a heart-green wash, signed
+    LiveExperience  §7 "what this is not" (throat) + what you leave with (sage)
     Host            §8 portrait, specialisms and the host's story (ajna)
     Register        §9 Google Form button + embed, event badges, FAQ
     FinalCta        §10 crown on ink, the largest button on the page
+lib/event.ts      the date, time, price, recording and seat cap — one place
 lib/chakras.ts    typed manifest for the chakra assets
 lib/register.ts   the form URL and its embed variant
 ```
@@ -101,9 +109,27 @@ Three sections change shape rather than just stacking:
 - **What actually shifts** — the eight cards become a sticky pile, each one
   shrinking slightly as the next rides over it.
 
-## Placeholders to replace
+## Before this goes live
 
-- Testimonial copy in `Testimonials.tsx` — every card is chipped "Placeholder".
-- Contact rows in `Booking.tsx` — email, WhatsApp and Instagram.
-- Social links in `Footer.tsx`.
-- The webinar date, which currently reads "Coming soon", as in the brief.
+**Set the date.** `lib/event.ts` holds every fact about the session — the date,
+the time, the duration, whether it is free, whether a recording is sent, and the
+seat cap. `date` and `time` are the only two blanks. Fill them and the hero, the
+meta row, the promo strips, the sticky bar, the badges, the FAQ and the final
+call all update together. Until then the copy falls back to waitlist wording
+("date announced soon"), which is honest but converts far worse than a real date.
+
+Two more optional wins in the same file and one component:
+
+- `EVENT.seats` — leave it `0` and no scarcity is claimed anywhere. Set it to a
+  real cap and the page can say a number instead of "limited seats", which the
+  old copy asserted eight times without ever quantifying.
+- `CREDENTIALS` in `Host.tsx` — training, year, session count. The array is empty
+  and the line stays hidden rather than inventing credentials; fill any entry and
+  it appears. A sceptical reader currently finds no anchor at all.
+- Social links in `Footer.tsx`, and a contact route beside the privacy line.
+
+The copy itself was rewritten against a full audit in Aug 2026: promises became
+deliverables, the "for you if" list became scenes rather than diagnoses, the
+testimonial wall moved from seventh to fourth (which also repairs the root→crown
+chakra order), §7 became "what this is not", and the FAQ was rebuilt around
+objections — free, pitch, recording, camera — instead of information.

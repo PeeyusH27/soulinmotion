@@ -5,12 +5,13 @@ import { useEffect, useState } from 'react';
 import Badge from './Badge';
 import ChakraRail from './ChakraRail';
 import RegisterButton from './RegisterButton';
+import { DATE_SHORT } from '@/lib/event';
 
 const NAV = [
-  { label: 'The webinar', href: '#about' },
-  { label: 'The flow', href: '#flow' },
-  { label: 'Your host', href: '#host' },
-  { label: 'FAQ', href: '#register' },
+  { label: 'The session', href: '#about' },
+  { label: 'What we cover', href: '#flow' },
+  { label: 'Shradha', href: '#host' },
+  { label: 'Questions', href: '#register' },
 ];
 
 export default function Header() {
@@ -32,7 +33,7 @@ export default function Header() {
       <div className="wrap header-inner">
         <Link className="brand" href="#home" aria-label="Soul in Motion home" onClick={() => setOpen(false)}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/brand/logo.png" alt="" aria-hidden="true" />
+          <img src="/brand/emblem.png" alt="" aria-hidden="true" />
           <span>
             <span className="brand-name">Soul in Motion</span>
             <span className="brand-tag">Transform from within</span>
@@ -46,7 +47,7 @@ export default function Header() {
         </nav>
 
         <div className="header-actions">
-          <RegisterButton size="sm">Register</RegisterButton>
+          <RegisterButton size="sm">Save my seat</RegisterButton>
           <button
             className="nav-toggle"
             aria-label={open ? 'Close menu' : 'Open menu'}
@@ -75,13 +76,13 @@ export default function Header() {
         ))}
       </div>
       <div className="sheet-foot">
-        <small>Live webinar · Limited seats</small>
+        <small>Free · 90 minutes · {DATE_SHORT}</small>
         <div className="badges">
+          <Badge kind="free">Free</Badge>
           <Badge kind="time">90 min</Badge>
           <Badge kind="zoom">Live on Zoom</Badge>
-          <Badge kind="date">Date coming soon</Badge>
         </div>
-        <RegisterButton size="lg">Reserve your spot</RegisterButton>
+        <RegisterButton size="lg">Save my free seat</RegisterButton>
       </div>
     </nav>
     </>

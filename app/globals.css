@@ -243,10 +243,12 @@ section { position: relative; }
 .badge--live { background: #FDE7E1; color: #A5321F; }
 .badge--live::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: #E23B23; animation: pulse 1.6s infinite; }
 .badge--seats { background: var(--gold-l); color: var(--gold-d); }
+.badge--free { background: var(--gold-l); color: var(--gold-d); font-weight: 600; }
 .badge--zoom { background: #E3EEF5; color: #1F4E6B; }
 .badge--time { background: var(--sage-l); color: var(--sage-d); }
 .badge--date { background: var(--clay-l); color: var(--clay-d); }
 .on-ink .badge--zoom, .on-ink .badge--time, .on-ink .badge--date { background: rgba(255,255,255,.12); color: var(--on-ink); }
+.on-ink .badge--free { background: var(--gold); color: #2A1E08; }
 .badges { display: flex; flex-wrap: wrap; gap: 10px; }
 @keyframes pulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(226, 59, 35, .5); } 70% { box-shadow: 0 0 0 8px rgba(226, 59, 35, 0); } }
 
@@ -301,6 +303,24 @@ section { position: relative; }
   font-weight: 600;
 }
 .check-list .ck svg { width: 16px; height: 16px; stroke: #fff; fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+/* "what this is not" is a list of exclusions, not a sequence and not a tick:
+   an outlined marker so it never reads as another set of promises */
+.check-list .ck--no { background: transparent; border: 1.5px solid var(--line); color: var(--ink-3); }
+.check-list .ck--no svg { stroke: var(--ink-3); stroke-width: 2; }
+.check-list--no li { font-weight: 500; color: var(--ink-2); }
+
+/* the line that disqualifies, set apart from the list it follows */
+.not-for {
+  margin-top: var(--s-3);
+  padding: var(--s-2) var(--s-3);
+  border-left: 3px solid var(--tint, var(--clay));
+  border-radius: 0 8px 8px 0;
+  background: color-mix(in srgb, var(--tint, var(--clay)) 7%, transparent);
+  font-size: var(--fs-sm);
+  color: var(--ink-2);
+  max-width: 62ch;
+}
+.not-for b { color: var(--ink); }
 .on-ink .check-list li { border-color: rgba(255,255,255,.12); }
 
 /* ---------- cards ---------- */
@@ -352,9 +372,9 @@ html.has-motion .reveal.is-in .icon-line rect, html.has-motion .reveal.is-in .ic
 .site-header.is-stuck { box-shadow: var(--shadow-sm); }
 .header-inner { height: 100%; display: flex; align-items: center; gap: var(--s-3); }
 .brand { display: flex; align-items: center; gap: 12px; margin-right: auto; }
-.brand img { width: 40px; height: 40px; border-radius: 50%; }
+.brand img { width: 44px; height: 44px; border-radius: 50%; box-shadow: 0 6px 16px -8px rgba(29, 33, 23, .6); }
 .brand-name { display: block; font-family: var(--display); font-size: 1.15rem; font-weight: 600; letter-spacing: -.01em; line-height: 1.1; white-space: nowrap; }
-.brand-tag { display: block; font-family: var(--mono); font-size: .68rem; letter-spacing: .18em; text-transform: uppercase; color: var(--ink-3); }
+.brand-tag { display: block; font-family: var(--mono); font-size: .68rem; letter-spacing: .18em; text-transform: uppercase; color: var(--ink-3); white-space: nowrap; }
 .nav { display: flex; gap: var(--s-3); }
 .nav a { font-size: var(--fs-sm); font-weight: 600; color: var(--ink-2); transition: color var(--fast); }
 .nav a:hover { color: var(--clay-d); }
@@ -385,114 +405,297 @@ html.has-motion .reveal.is-in .icon-line rect, html.has-motion .reveal.is-in .ic
 .header-actions { display: flex; align-items: center; gap: 10px; }
 
 /* ============================================================
-   HERO
+   HERO — the mark on ink. The seven discs are jewel-toned and only
+   glow on a dark ground, so the banner runs inverted: words left,
+   the turning emblem inside its chakra ring right.
    ============================================================ */
 .hero {
-  min-height: min(100vh, 960px);
-  min-height: min(100svh, 960px);
-  display: grid;
-  align-items: center;
-  padding-top: calc(var(--header-h) + var(--s-5));
-  padding-bottom: var(--s-5);
-  overflow: hidden;
-  background:
-    radial-gradient(60% 80% at 100% 0%, rgba(214, 162, 74, .24), transparent 60%),
-    radial-gradient(50% 60% at 0% 100%, rgba(201, 104, 75, .18), transparent 60%),
-    var(--paper);
-}
-.hero-grid { width: min(100% - var(--gutter) * 2, var(--wrap)); display: grid; grid-template-columns: 1.3fr .7fr; gap: clamp(var(--s-4), 4vw, var(--s-7)); align-items: center; }
-.hero-copy { display: grid; gap: var(--s-3); justify-items: start; }
-.hero-cta + .badges { margin-top: calc(var(--s-1) * -1); }
-.hero-copy .d1 { margin-top: 0; }
-.hero-copy .d1 .line { display: block; white-space: nowrap; }
-.hero-copy .d1 .clay { color: var(--clay); font-style: italic; font-weight: 400; }
-.hero-cta { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-2) var(--s-3); }
-.hero-fine { font-size: var(--fs-sm); color: var(--ink-3); }
-.hero-art { display: grid; place-items: center; }
-
-/* the mark: breathing, leaning toward the pointer, inside a turning aura */
-.hero-mark {
   position: relative;
   display: grid;
-  place-items: center;
-  width: min(100%, 470px);
-  aspect-ratio: 1;
-  perspective: 900px;
+  /* the column MUST be constrained: without it the single implicit column is
+     sized to max-content, the marquee's track blows that out to ~2000px, and
+     .wrap then resolves to its 1160px cap at every viewport — which reads fine
+     on a desktop and runs straight off the side of a phone */
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: 1fr auto;
+  min-height: min(100svh, 960px);
+  padding-top: calc(var(--header-h) + var(--s-3));
+  overflow: hidden;
+  isolation: isolate;
+  background: var(--ink);
+  color: var(--on-ink);
+}
+
+.hero-glow { position: absolute; inset: -10% -8%; z-index: 0; pointer-events: none; }
+.hero-glow i {
+  position: absolute;
+  width: 46vw; max-width: 660px; aspect-ratio: 1;
+  border-radius: 50%;
+  filter: blur(100px);
+  animation: orb 26s var(--ease) infinite alternate;
+}
+.hero-glow i:nth-child(1) { right: 2%; top: -16%; background: var(--gold); opacity: .26; }
+.hero-glow i:nth-child(2) { left: -16%; top: 20%; background: var(--clay); opacity: .22; animation-delay: -9s; }
+.hero-glow i:nth-child(3) { left: 30%; bottom: -34%; background: var(--sage); opacity: .18; animation-delay: -17s; }
+
+.hero-grid {
+  position: relative;
+  z-index: 2;
+  align-self: center;
+  display: grid;
+  grid-template-columns: minmax(0, 1.02fr) minmax(0, .98fr);
+  gap: clamp(var(--s-4), 4vw, var(--s-7));
+  align-items: center;
+  padding-block: var(--s-2) var(--s-4);
+}
+/* an explicit column, so the widest child can never stretch the track past
+   the wrap and push the whole banner off a narrow screen */
+.hero-copy {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  justify-items: start;
+}
+.hero-copy > * { max-width: min(100%, 620px); }
+
+/* ---- eyebrow ---- */
+.hero-eyebrow {
+  display: flex; align-items: center; flex-wrap: wrap; gap: 10px 14px;
+  font-family: var(--mono);
+  font-size: var(--fs-label);
+  font-weight: 500;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--on-ink-2);
+}
+.hero-live {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 7px 15px 7px 12px;
+  border-radius: var(--r-pill);
+  background: var(--gold);
+  color: #2A1E08;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.hero-live i { width: 7px; height: 7px; border-radius: 50%; background: #8E1D0B; animation: pulse-ink 1.6s infinite; }
+@keyframes pulse-ink { 0%, 100% { box-shadow: 0 0 0 0 rgba(142, 29, 11, .6); } 70% { box-shadow: 0 0 0 8px rgba(142, 29, 11, 0); } }
+.hero-when { color: var(--on-ink-2); }
+
+/* ---- headline ---- */
+.hero-title {
+  margin-top: clamp(var(--s-3), 2vw, var(--s-4));
+  font-family: var(--display);
+  font-size: clamp(2.7rem, 1rem + 4.9vw, 5.1rem);
+  font-weight: 500;
+  line-height: .95;
+  letter-spacing: -.038em;
+  color: var(--on-ink);
+  font-variation-settings: "SOFT" 50, "opsz" 144;
+}
+.hero-line { display: block; }
+.hero-line--accent {
+  position: relative;
+  display: inline-block;
+  color: #E8A88F;
+  font-style: italic;
+  font-weight: 400;
+}
+.hero-sweep {
+  position: absolute; left: -1.5%; bottom: -.1em;
+  width: 103%; height: .3em;
+  overflow: visible;
+}
+.hero-sweep path {
+  fill: none;
+  stroke: url(#sweep);
+  stroke-width: 8; stroke-linecap: round;
+  stroke-dasharray: 360; stroke-dashoffset: 360;
+}
+html.has-motion .reveal.is-in .hero-sweep path { animation: sweep 1.1s var(--ease) .9s forwards; }
+html:not(.has-motion) .hero-sweep path { stroke-dashoffset: 0; }
+@keyframes sweep { to { stroke-dashoffset: 0; } }
+
+/* ---- lead, actions, detail ---- */
+.hero-lead {
+  margin-top: clamp(var(--s-3), 2vw, var(--s-4));
+  max-width: 52ch;
+  font-size: var(--fs-lead);
+  line-height: 1.5;
+  color: var(--on-ink-2);
+}
+.hero-actions {
+  display: grid; grid-template-columns: minmax(0, 1fr); justify-items: start; gap: var(--s-2);
+  margin-top: clamp(var(--s-3), 2vw, var(--s-4));
+  width: 100%;
+}
+.hero-buttons { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-2) var(--s-4); }
+.hero-link {
+  display: inline-flex; align-items: center; gap: 10px;
+  padding-bottom: 5px;
+  border-bottom: 1.5px solid rgba(243, 238, 227, .28);
+  font-size: var(--fs-btn);
+  font-weight: 700;
+  color: var(--on-ink);
+  transition: color var(--fast), border-color var(--fast);
+}
+.hero-link svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.6; transition: transform var(--mid) var(--ease); }
+.hero-link:hover { color: #E8C980; border-color: #E8C980; }
+.hero-link:hover svg { transform: translateX(4px); }
+.hero-note { font-size: var(--fs-sm); color: var(--on-ink-2); }
+
+.hero-meta {
+  display: grid;
+  grid-template-columns: 1.55fr 1.15fr 1.1fr .5fr;
+  width: 100%;
+  margin: clamp(var(--s-3), 2vw, var(--s-4)) 0 0;
+  padding-top: var(--s-3);
+  border-top: 1px solid rgba(243, 238, 227, .18);
+}
+.hero-meta > div { display: grid; gap: 5px; padding-right: var(--s-2); border-right: 1px solid rgba(243, 238, 227, .1); }
+.hero-meta > div:last-child { border-right: 0; }
+.hero-meta dt { font-family: var(--mono); font-size: .68rem; letter-spacing: .16em; text-transform: uppercase; color: var(--on-ink-2); }
+.hero-meta dd {
+  margin: 0;
+  font-family: var(--display);
+  font-size: clamp(.98rem, .88rem + .42vw, 1.16rem);
+  font-weight: 600;
+  letter-spacing: -.015em;
+  line-height: 1.25;
+  color: var(--on-ink);
+}
+.hero-meta > div:last-child dd { color: #E8C980; }
+
+/* ============================================================
+   THE WHEEL — seven discs on a tilted circle: it drifts, takes a
+   drag, carries a flick, and brings a tapped disc round to the front
+   ============================================================ */
+.hero-art {
+  position: relative;
+  justify-self: center;
+  display: grid;
+  justify-items: center;
+  width: min(100%, 560px);
+}
+.hero-aura {
+  position: absolute;
+  left: 50%; top: 26%;
+  width: 78%; aspect-ratio: 1;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(214, 162, 74, .3), rgba(201, 104, 75, .13) 46%, transparent 70%);
+  filter: blur(38px);
+  animation: aura 9s var(--ease) infinite alternate;
+  pointer-events: none;
+}
+@keyframes aura { from { opacity: .7; transform: translate(-50%, -50%) scale(.94); } to { opacity: 1; transform: translate(-50%, -50%) scale(1.06); } }
+
+.orbit { position: relative; z-index: 1; display: grid; justify-items: center; width: 100%; }
+.orbit-stage {
+  position: relative;
+  width: 100%;
+  /* Height has to clear the arc: half the FRONT disc (base 0.215w x max scale
+     1.2) plus the vertical radius 0.155w, doubled — about 0.57w. Raising the
+     front disc's scale in ChakraOrbit means raising this too, or it spills
+     onto the label below. */
+  aspect-ratio: 1.72 / 1;
   touch-action: pan-y;
   cursor: grab;
 }
-.hero-mark.is-held { cursor: grabbing; }
-.hero-float { position: relative; display: grid; place-items: center; width: 84%; animation: breathe 9s var(--ease) infinite; }
-.hero-ball {
-  position: relative;
-  display: block;
-  width: 100%;
-  aspect-ratio: 1;
-  border-radius: 50%;
-  transform-style: preserve-3d;
-  transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) rotateZ(var(--rz, 0deg));
-  transition: transform var(--mid) var(--ease);
-  box-shadow: 0 40px 90px -40px rgba(165, 79, 53, .5), 0 20px 60px -30px rgba(86, 99, 74, .35);
-  animation: wobble 14s var(--ease) infinite;
-}
-.hero-ball > * { position: absolute; inset: 0; border-radius: 50%; pointer-events: none; }
-.hero-mark img { width: 100%; height: 100%; object-fit: cover; user-select: none; -webkit-user-drag: none; }
-.hero-mark.is-held .hero-ball { transition: none; animation-play-state: paused; }
-.hero-mark.is-held .hero-float { animation-play-state: paused; }
-.hero-shade {
-  background:
-    radial-gradient(78% 78% at calc(30% + var(--lx, 0%)) calc(26% + var(--ly, 0%)), rgba(255, 246, 236, .5), rgba(255, 246, 236, .12) 38%, transparent 58%),
-    radial-gradient(96% 96% at calc(74% - var(--lx, 0%)) calc(80% - var(--ly, 0%)), rgba(24, 28, 20, .55), rgba(24, 28, 20, .16) 46%, transparent 70%);
-  mix-blend-mode: soft-light;
-}
-.hero-gloss {
-  overflow: hidden;
-  -webkit-mask: radial-gradient(circle, #000 70%, transparent 71%);
-  mask: radial-gradient(circle, #000 70%, transparent 71%);
-  transform: rotate(var(--spin, 0deg));
-}
-.hero-gloss::before {
-  content: "";
+.orbit-stage.is-held { cursor: grabbing; }
+.orbit-disc {
   position: absolute;
-  left: -30%; top: -46%;
-  width: 84%; height: 108%;
+  left: 50%; top: 50%;
+  padding: 0;
+  border: 0;
   border-radius: 50%;
-  background: linear-gradient(112deg, transparent 26%, rgba(255, 255, 255, .34) 48%, transparent 66%);
-  filter: blur(10px);
-  animation: sheen 9s var(--ease) infinite;
+  background: none;
+  cursor: pointer;
+  will-change: transform, opacity;
+  /* the wheel is redrawn every frame, so nothing here may transition */
+  transition: none;
 }
-.hero-rim {
-  box-shadow:
-    inset 0 2px 3px rgba(255, 255, 255, .5),
-    inset 0 -20px 34px -20px rgba(165, 79, 53, .45),
-    inset 0 22px 40px -24px rgba(255, 253, 249, .5),
-    inset -12px -8px 34px -18px rgba(24, 28, 20, .5);
-  border: 1px solid rgba(255, 253, 249, .16);
-}
-.hero-cast {
+.orbit-disc img {
+  width: 100%; height: 100%;
+  border-radius: 50%;
+  box-shadow: 0 14px 30px -10px rgba(0, 0, 0, .85), 0 0 26px -8px rgba(214, 162, 74, .34);
   pointer-events: none;
-  position: absolute;
-  bottom: 4%;
-  width: 58%; height: 8%;
-  border-radius: 50%;
-  background: radial-gradient(closest-side, rgba(86, 99, 74, .34), transparent 78%);
-  filter: blur(14px);
-  transform: translateX(calc(var(--lx, 0%) * -1.6));
-  animation: castBreathe 9s var(--ease) infinite;
 }
-@keyframes breathe { 0%, 100% { transform: translate3d(0, 0, 0); } 50% { transform: translate3d(0, -14px, 0); } }
-@keyframes castBreathe {
-  0%, 100% { opacity: .9; transform: translateX(calc(var(--lx, 0%) * -1.6)) scale(1); }
-  50% { opacity: .55; transform: translateX(calc(var(--lx, 0%) * -1.6)) scale(.86); }
+.orbit-disc:focus-visible { outline: 3px solid var(--gold); outline-offset: 4px; }
+
+/* whichever disc is in front names itself here */
+.orbit-label { display: grid; justify-items: center; gap: 8px; text-align: center; margin-top: var(--s-2); }
+.orbit-pill {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 6px 15px;
+  border-radius: var(--r-pill);
+  border: 1px solid rgba(232, 201, 128, .35);
+  background: rgba(232, 201, 128, .1);
+  font-family: var(--mono);
+  font-size: .7rem;
+  font-weight: 500;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: #E8C980;
 }
-@keyframes wobble {
-  0%, 100% { transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) rotateZ(var(--rz, 0deg)) scale(1); }
-  35% { transform: rotateX(calc(var(--rx, 0deg) + 1.4deg)) rotateY(calc(var(--ry, 0deg) - 1.8deg)) rotateZ(var(--rz, 0deg)) scale(1.014); }
-  70% { transform: rotateX(calc(var(--rx, 0deg) - 1.2deg)) rotateY(calc(var(--ry, 0deg) + 1.6deg)) rotateZ(var(--rz, 0deg)) scale(.99); }
+.orbit-pill i { font-style: normal; font-size: .95rem; line-height: 1; }
+.orbit-name {
+  font-family: var(--display);
+  font-size: clamp(1.9rem, 1.4rem + 1.6vw, 2.6rem);
+  font-weight: 600;
+  letter-spacing: -.02em;
+  line-height: 1.05;
+  color: var(--on-ink);
 }
-@keyframes sheen { 0%, 100% { transform: translate3d(0, 0, 0) rotate(0deg); opacity: .5; } 50% { transform: translate3d(64%, 22%, 0) rotate(12deg); opacity: .85; } }
-@keyframes spin { to { transform: rotate(360deg); } }
-@keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-14px); } }
+.orbit-keys {
+  font-family: var(--mono);
+  font-size: .74rem;
+  font-weight: 500;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--on-ink-2);
+}
+.orbit-hint {
+  display: inline-flex; align-items: center; gap: 9px;
+  margin-top: var(--s-3);
+  font-size: .8rem;
+  color: var(--on-ink-2);
+  opacity: .75;
+}
+.orbit-hint svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+
+/* ---- the seven steps, drifting along the foot ---- */
+.hero-marquee {
+  position: relative;
+  z-index: 2;
+  min-width: 0;
+  border-top: 1px solid rgba(243, 238, 227, .12);
+  background: rgba(243, 238, 227, .04);
+  overflow: hidden;
+  -webkit-mask: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+  mask: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+}
+.marquee-track { display: flex; width: max-content; animation: marquee 58s linear infinite; }
+.marquee-track span {
+  display: inline-flex; align-items: center; gap: 11px;
+  padding: 15px 26px;
+  font-size: var(--fs-sm); font-weight: 600; letter-spacing: .005em;
+  color: var(--on-ink-2); white-space: nowrap;
+}
+.marquee-track em { font-family: var(--mono); font-style: normal; font-size: .7rem; letter-spacing: .14em; color: #E8C980; }
+@keyframes marquee { to { transform: translateX(-50%); } }
+.hero-marquee:hover .marquee-track { animation-play-state: paused; }
+
+/* ---- the header rides the dark banner until it sticks ---- */
+.site-header:not(.is-stuck) {
+  background: transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border-bottom-color: transparent;
+}
+.site-header:not(.is-stuck) .brand-name { color: var(--on-ink); }
+.site-header:not(.is-stuck) .brand-tag { color: rgba(243, 238, 227, .6); }
+.site-header:not(.is-stuck) .nav a { color: rgba(243, 238, 227, .84); }
+.site-header:not(.is-stuck) .nav a:hover { color: #E8C980; }
+.site-header:not(.is-stuck) .nav-toggle { background: rgba(243, 238, 227, .14); color: var(--on-ink); box-shadow: none; }
 
 /* ============================================================
    §2 FOR YOU IF — root
@@ -559,10 +762,17 @@ html.has-motion .reveal.is-in .icon-line rect, html.has-motion .reveal.is-in .ic
   padding-block: var(--s-2);
   border-bottom: 1px solid rgba(255, 255, 255, .12);
 }
-.step img { width: 64px; height: 64px; border-radius: 50%; box-shadow: 0 10px 24px -10px rgba(0,0,0,.7); }
+/* one leaf per step, in a soft gold holder that keeps the old discs' rhythm */
+.step-leaf {
+  width: 64px; height: 64px;
+  display: grid; place-items: center;
+  border-radius: 50%;
+  border: 1px solid rgba(232, 201, 128, .28);
+  background: rgba(232, 201, 128, .07);
+}
+.step-leaf .icon-line { width: 36px; height: 36px; stroke: #E8C980; stroke-width: 1.35; }
 .step b { display: block; font-family: var(--display); font-size: var(--fs-h3); font-weight: 600; line-height: 1.1; letter-spacing: -.015em; }
 .step span { display: block; margin-top: 4px; font-size: var(--fs-sm); color: var(--on-ink-2); }
-.step-n { font-family: var(--mono); font-size: var(--fs-label); letter-spacing: .14em; color: #E8C980; }
 .steps-cta { display: flex; align-items: center; gap: var(--s-3); padding-top: var(--s-4); }
 
 /* ============================================================
@@ -719,6 +929,31 @@ html.has-motion .reveal.is-in .icon-line rect, html.has-motion .reveal.is-in .ic
 .final .d2 { max-width: 20ch; margin-inline: auto; }
 .final .lead { margin: var(--s-3) auto 0; }
 .final .btn { margin-top: var(--s-4); }
+/* the quote is signed now — a point of view, not a decoration */
+.quote-by {
+  display: block;
+  margin-top: var(--s-3);
+  font-family: var(--mono);
+  font-style: normal;
+  font-size: var(--fs-label);
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.host-creds {
+  margin-top: var(--s-1);
+  font-family: var(--mono);
+  font-size: var(--fs-label);
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.footer-privacy {
+  margin-top: var(--s-3);
+  font-size: var(--fs-sm);
+  color: var(--on-ink-2);
+}
+
 .final-note { margin-top: var(--s-3); font-family: var(--mono); font-size: var(--fs-label); letter-spacing: .12em; text-transform: uppercase; color: #E8C980; }
 
 /* ============================================================
@@ -771,7 +1006,8 @@ html.has-motion .reveal.is-in { opacity: 1; transform: none; }
   html { scroll-behavior: auto; }
   .reveal, .reveal .headline .hw, .hl::after { opacity: 1; transform: none; transition: none; }
   .reveal .icon-line * { stroke-dashoffset: 0 !important; }
-  .hero-float, .hero-ball, .hero-cast, .hero-gloss::before, .glass-orbs i, .disc-figure img, .badge--live::before { animation: none; }
+  .hero-glow i, .marquee-track, .hero-sweep path, .hero-aura, .glass-orbs i,
+  .disc-figure img, .badge--live::before { animation: none; }
   .btn::after { display: none; }
 }
 
@@ -779,7 +1015,6 @@ html.has-motion .reveal.is-in { opacity: 1; transform: none; }
    RESPONSIVE
    ============================================================ */
 @media (max-width: 1024px) {
-  .hero-grid { grid-template-columns: 1fr 1fr; }
   .pair, .host, .register { grid-template-columns: 1fr; }
   .form-card { position: static; order: -1; }
   .grid--3 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -828,15 +1063,28 @@ html.has-motion .reveal.is-in { opacity: 1; transform: none; }
   .nav-toggle { display: grid; }
   .nav-toggle[aria-expanded="true"] { background: var(--on-ink); color: var(--ink); box-shadow: none; }
   body.nav-locked { overflow: hidden; }
-  .brand-tag { display: none; }
+  .brand-tag { font-size: .52rem; letter-spacing: .12em; margin-top: 2px; }
+  .site-header.menu-open .brand-tag { color: var(--on-ink-2); }
 
-  .hero-grid { grid-template-columns: 1fr; text-align: center; }
-  .hero-art { order: -1; }
-  .hero-mark { width: min(70vw, 340px); }
-  .hero-copy { justify-items: center; }
-  .hero-copy .lead { margin-inline: auto; }
-  .hero-cta, .badges { justify-content: center; }
-  .hero-cta, .hero-cta .btn { width: 100%; }
+  /* one column, and the mark leads: a turning mandala is a better opening
+     image on a phone than a headline that has to wrap three times */
+  .hero-grid { grid-template-columns: minmax(0, 1fr); gap: var(--s-4); }
+  /* the words own the first screen on their own — the wheel starts below the
+     fold at every phone height, so the banner reads as a headline and not as
+     a toy with some text under it */
+  .hero-copy {
+    min-height: calc(100svh - var(--header-h) - var(--s-4));
+    align-content: center;
+  }
+  .hero-art { width: 100%; margin-top: var(--s-5); }
+  .hero-lead { margin-top: clamp(var(--s-3), 4vw, var(--s-4)); }
+  .hero-buttons { width: 100%; flex-direction: column; align-items: stretch; gap: var(--s-2); }
+  .hero-buttons .btn { width: 100%; }
+  .hero-link { align-self: start; justify-self: start; border-bottom: 0; padding: 6px 0; }
+  .hero-note { justify-self: center; text-align: center; }
+  .hero-meta { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-3) 0; }
+  .hero-meta > div:nth-child(even) { border-right: 0; padding-left: var(--s-3); }
+  .hero-meta > div:nth-child(odd) { border-right: 1px solid rgba(243, 238, 227, .1); }
 
   .split, .steps, .grid--2 { grid-template-columns: 1fr; }
   .sec-head-row { flex-direction: column-reverse; align-items: center; text-align: center; }
@@ -917,7 +1165,7 @@ html.has-motion .reveal.is-in { opacity: 1; transform: none; }
   .stack > .card--glass { background: rgba(255, 253, 248, .78); }
   .stack > .card--glass-cta { background: color-mix(in srgb, var(--sacral) 92%, transparent); }
   .brand { gap: 8px; }
-  .brand img { width: 34px; height: 34px; }
+  .brand img { width: 38px; height: 38px; }
   .brand-name { font-size: clamp(.95rem, 4vw, 1.05rem); }
   .header-inner { gap: var(--s-2); }
   .header-actions { gap: 8px; }
@@ -930,9 +1178,85 @@ html.has-motion .reveal.is-in { opacity: 1; transform: none; }
   .strip { flex-direction: column; }
   .strip .btn { width: 100%; }
   .step { grid-template-columns: 52px 1fr; }
-  .step img { width: 52px; height: 52px; }
+  .step-leaf { width: 52px; height: 52px; }
+  .step-leaf .icon-line { width: 29px; height: 29px; }
   .form-embed { height: 640px; }
   .final .btn { width: 100%; }
   .footer-top, .footer-base { flex-direction: column; align-items: center; text-align: center; }
   .footer-nav { justify-content: center; }
+}
+
+
+
+/* On a short desktop viewport the banner still has to show the detail row —
+   it is the block that answers "when, where, how much". */
+@media (min-width: 901px) and (max-height: 880px) {
+  .hero { padding-top: calc(var(--header-h) + var(--s-2)); }
+  .hero-grid { padding-block: 0 var(--s-2); }
+  /* shrink the wheel as a whole rather than squash the arc into the label */
+  .hero-art { width: min(100%, 460px); }
+  .hero-title { margin-top: var(--s-2); font-size: clamp(2.4rem, 3.4vw, 4.1rem); }
+  .hero-lead { margin-top: var(--s-2); font-size: 1.08rem; }
+  .hero-actions { margin-top: var(--s-3); }
+  .hero-buttons .btn--lg { min-height: 60px; }
+  .hero-meta { margin-top: var(--s-3); padding-top: var(--s-2); }
+  .orbit-name { font-size: 1.9rem; }
+  .orbit-hint { margin-top: var(--s-2); }
+}
+
+/* ---------- phone hero: a poster, not a folded desktop ---------- */
+@media (max-width: 640px) {
+  .hero { padding-top: calc(var(--header-h) + var(--s-2)); }
+  .hero-grid { row-gap: var(--s-3); }
+  .hero-art { width: 100%; }
+  /* the headline carries the phone banner, so the whole text block centres
+     under it — a centred heading over left-set copy reads as a mistake */
+  .hero-copy { justify-items: center; text-align: center; }
+  /* the date wraps to its own line rather than running off the side */
+  .hero-eyebrow { justify-content: center; gap: 7px 10px; font-size: .66rem; letter-spacing: .09em; }
+  .hero-live { padding: 5px 11px 5px 9px; font-size: .66rem; }
+  .hero-title { margin-top: var(--s-2); font-size: clamp(2.5rem, 12.2vw, 3.4rem); line-height: .98; letter-spacing: -.03em; }
+  .hero-lead { margin-top: var(--s-2); margin-inline: auto; font-size: 1rem; line-height: 1.5; max-width: 40ch; }
+  .hero-actions { margin-top: var(--s-3); gap: 12px; justify-items: center; }
+  .hero-buttons { gap: 10px; }
+  .hero-buttons .btn { min-height: 56px; font-size: 1rem; }
+  .hero-link { align-self: center; border-bottom: 1.5px solid rgba(243, 238, 227, .28); padding: 6px 0 4px; font-size: .92rem; }
+  .hero-note { justify-self: center; font-size: .78rem; line-height: 1.45; }
+  /* the detail card keeps its own left-set label/value rhythm */
+  .hero-meta { text-align: left; }
+  /* the four facts gather into one panel instead of loose hairlines */
+  .hero-meta {
+    margin-top: var(--s-3);
+    padding: 2px;
+    gap: 0;
+    border: 1px solid rgba(243, 238, 227, .14);
+    border-radius: 16px;
+    background: rgba(243, 238, 227, .05);
+  }
+  .hero-meta > div { padding: 10px 13px; gap: 3px; border-right: 0; }
+  .hero-meta > div:nth-child(odd) { border-right: 1px solid rgba(243, 238, 227, .1); }
+  .hero-meta > div:nth-child(-n+2) { border-bottom: 1px solid rgba(243, 238, 227, .1); }
+  .hero-meta > div:nth-child(even) { padding-left: 14px; }
+  .hero-meta dt { font-size: .6rem; letter-spacing: .14em; }
+  .hero-meta dd { font-size: .92rem; }
+  .marquee-track span { font-size: .95rem; padding: 11px 20px; }
+}
+
+/* ---------- narrow phones ----------
+   This block must stay LAST: it shares specificity with the 900px and 640px
+   blocks above, so source order is the only thing that lets it win. */
+@media (max-width: 400px) {
+  /* the brand and the CTA fight for the same row at 360 */
+  .brand img { width: 36px; height: 36px; }
+  .brand { gap: 9px; }
+  .brand-name { font-size: .95rem; }
+  .brand-tag { font-size: .46rem; letter-spacing: .08em; }
+  .header-inner { gap: 8px; }
+  .header-actions { gap: 6px; }
+  .header-actions .btn { min-height: 38px; padding: 0 10px; font-size: .75rem; }
+  /* "Saturday 5 September" has to hold one line inside its cell */
+  .hero-meta > div { padding: 9px 9px; }
+  .hero-meta dt { font-size: .57rem; }
+  .hero-meta dd { font-size: .82rem; letter-spacing: -.025em; }
+  .hero-meta > div:nth-child(even) { padding-left: 11px; }
 }

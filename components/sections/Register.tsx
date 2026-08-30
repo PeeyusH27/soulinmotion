@@ -2,30 +2,48 @@
 
 import { useState } from 'react';
 import Headline from '../Headline';
-import Badge, { EventBadges } from '../Badge';
+import { EventBadges } from '../Badge';
 import RegisterButton from '../RegisterButton';
 import { CAN_EMBED, EMBED_URL, HAS_FORM } from '@/lib/register';
 
+/**
+ * Objections first, information second. The five questions that used to be here
+ * were all informational — but nobody is blocked on "what is this about" after
+ * scrolling the whole page. They are blocked on cost, on being sold to, and on
+ * having to turn their camera on.
+ */
 const FAQS = [
   {
-    q: 'What is this webinar about?',
-    a: 'An experiential journey into how your mind, body, patterns and chakras shape the way you experience life — and how awareness lets you question old patterns and create a deeper identity shift.',
+    q: 'Is it really free?',
+    a: 'Yes. No card, no trial, and nothing to buy on the call. You register, the Zoom link arrives, you show up.',
+  },
+  {
+    q: 'Will there be a sales pitch at the end?',
+    a: 'No. The full ninety minutes is the session. If you want to work with me afterwards you’re welcome to ask, but nothing is sold on the call.',
+  },
+  {
+    q: 'Will it be recorded?',
+    a: 'Yes — everyone who registers is sent the full recording afterwards, including the closing chakra meditation. So register even if you already know you can’t make it live.',
+  },
+  {
+    q: 'Do I have to be on camera or speak?',
+    a: 'No. Cameras are optional and the chat is enough. Nobody is put on the spot, and you share only if you want to.',
   },
   {
     q: 'Do I need to know anything about chakras or NLP?',
-    a: 'Not at all. The webinar is designed for beginners as well as people who already have some experience with energy work, yoga or personal growth.',
+    a: 'Not at all. It is built for beginners as well as people who already have some experience with energy work, yoga or personal growth — bring experience if you have it and it will go further.',
   },
   {
     q: 'Is this a meditation or a learning session?',
-    a: 'Both. You’ll understand the concepts behind your mind and patterns, experience basic NLP techniques, and then move into a guided chakra meditation.',
-  },
-  {
-    q: 'What if I can’t make the date?',
-    a: 'Register anyway. You’ll be the first to hear when the date is announced and about the next session.',
+    a: 'Both. You’ll understand the concepts behind your mind and patterns, practise a basic NLP technique live, and then move into a guided chakra meditation.',
   },
   {
     q: 'What should I bring?',
     a: 'An open mind, a quiet space where possible, a notebook and pen — and one real-life pattern or situation you’re curious about.',
+  },
+  {
+    q: 'What if I can’t make it live?',
+    a: 'Register anyway. The recording goes to everyone on the list, and you’ll hear about the next live session first.',
   },
 ];
 
@@ -38,16 +56,16 @@ export default function Register() {
       <div className="wrap register">
         <div className="register-aside">
           <div className="sec-head reveal">
-            <span className="kicker">Reserve your spot</span>
-            <Headline text="Register in under a minute" mark={['under', 'a', 'minute']} />
+            <span className="kicker">Last step</span>
+            <Headline text="Save your seat" mark={['seat']} />
             <p className="lead">
-              Fill in the short Google Form and the Zoom link arrives by email before the session.
+              One short form, about 40 seconds. The Zoom link and a calendar invite arrive by
+              email straight away.
             </p>
           </div>
 
           <div className="badges reveal" data-delay="1">
             <EventBadges />
-            <Badge kind="seats">Limited seats only</Badge>
           </div>
 
           <div className="faq reveal" data-delay="2">
@@ -68,8 +86,8 @@ export default function Register() {
 
         <div className="form-card reveal" data-delay="1">
           <h3 className="d3">Yes, save my seat</h3>
-          <RegisterButton size="lg" block>Register on Google Form</RegisterButton>
-          <p className="form-fine">Opens in a new tab · about 60 seconds</p>
+          <RegisterButton size="lg" block>Save my free seat</RegisterButton>
+          <p className="form-fine">Free · No card needed · Unsubscribe any time</p>
 
           {CAN_EMBED && <div className="form-or">or fill it in right here</div>}
 

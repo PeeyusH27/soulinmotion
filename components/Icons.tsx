@@ -32,6 +32,17 @@ export const GlobeIcon = (p: IconProps) => (
   </Icon>
 );
 
+/* ---------- the journey: one leaf per step ---------- */
+/* an upright leaf, symmetric about its midrib — which also reads as a lotus
+   petal, so it sits inside the brand rather than beside it */
+export const LeafIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <path d="M12 21.6C5 16.6 5 8.4 12 2.9c7 5.5 7 13.7 0 18.7z" />
+    <path d="M12 21.6V6.2" />
+    <path d="M12 11.4l3.7-2.7M12 11.4L8.3 8.7M12 16l3.3-2.4M12 16l-3.3-2.4" />
+  </Icon>
+);
+
 /* ---------- this webinar is for you if… ---------- */
 export const ThoughtLoopIcon = (p: IconProps) => (
   <Icon {...p}>
@@ -212,6 +223,14 @@ export function ArrowLine() {
   return (
     <svg viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
       <path d="M4 12h16M14 6l6 6-6 6" />
+    </svg>
+  );
+}
+
+export function Cross() {
+  return (
+    <svg viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M7 7l10 10M17 7L7 17" />
     </svg>
   );
 }

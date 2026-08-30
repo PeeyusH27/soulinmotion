@@ -93,9 +93,15 @@ export default function Testimonials() {
     >
       <div className="wrap">
         <div className="sec-head sec-head--center reveal">
-          <span className="kicker" style={{ color: 'var(--gold-d)' }}>In their words</span>
-          <Headline text="Messages that arrived after" mark={['after']} />
-          <p className="lead">Unedited, straight from the conversations.</p>
+          <span className="kicker" style={{ color: 'var(--gold-d)' }}>Unsolicited, unedited</span>
+          <Headline
+            text="“From the last 3 days when I start this technique, I feel positive”"
+            mark={['positive”']}
+          />
+          <p className="lead">
+            Real WhatsApp messages from Shradha’s healing and counselling sessions, copied across
+            exactly as they arrived — typos, emoji and all. Shared with permission.
+          </p>
         </div>
 
         <div className="wall">

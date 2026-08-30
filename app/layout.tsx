@@ -30,9 +30,9 @@ const mono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'Soul in Motion — See clearly. Question deeply. Live freely.',
+  title: 'Free live webinar: the patterns running your life — Soul in Motion',
   description:
-    'A live 90-minute webinar with Shradha Saha: a journey from patterns to awareness through the power of your mind and the wisdom of the chakras. Live on Zoom, limited seats only.',
+    'Why do you keep ending up in the same argument, the same job, the same 3 a.m. spiral? A free 90-minute live session with Shradha Saha on the patterns underneath it — and the chakra and NLP work that interrupts them. Live on Zoom, recording sent to everyone who registers.',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

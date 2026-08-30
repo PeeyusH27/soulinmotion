@@ -3,12 +3,14 @@ import RegisterButton from '../RegisterButton';
 import StackMeasure from '../StackMeasure';
 import { BrainIcon, EyeIcon, FunnelIcon, LotusIcon, MeditateIcon } from '../Icons';
 
+/* Every card names something you leave with — written down, found, practised
+   or kept — rather than a state of mind you are promised you will reach. */
 const ITEMS = [
-  { Icon: EyeIcon, title: 'See how your mind creates your reality', text: 'Recognise the thoughts and beliefs that keep repeating in your life.' },
-  { Icon: BrainIcon, title: 'Understand the patterns that keep you stuck', text: 'Move from automatic reactions toward more conscious choices.' },
-  { Icon: FunnelIcon, title: 'Discover your mental filters and beliefs', text: 'See the conditioning behind how you perceive yourself and others.' },
-  { Icon: LotusIcon, title: 'Experience the wisdom of chakras & inner energy', text: 'A framework for self-awareness, balance and inner exploration.' },
-  { Icon: MeditateIcon, title: 'Practice awareness that brings clarity, freedom & flow', text: 'A guided chakra meditation to close the session.' },
+  { Icon: EyeIcon, title: 'Name the pattern you’re actually in', text: 'We map one repeating situation from your own life. On paper, in about ten minutes.' },
+  { Icon: FunnelIcon, title: 'Find the question underneath it', text: 'Most patterns are held in place by one question you ask on repeat. You’ll find yours.' },
+  { Icon: LotusIcon, title: 'See where your body is holding it', text: 'Which centre carries the pattern — and what that tells you about how to work with it.' },
+  { Icon: BrainIcon, title: 'Learn one interruption you can use tomorrow', text: 'A simple NLP pattern-interrupt, practised live on the call rather than described.' },
+  { Icon: MeditateIcon, title: 'Close with a guided chakra meditation', text: 'Twenty minutes, root to crown. You get the recording to keep.' },
 ];
 
 /** §3 — sacral chakra: feeling and flow. Every promise visible at once. */
@@ -25,7 +27,7 @@ export default function YouWill() {
         <div className="sec-head-row stack-head reveal">
           <div className="sec-head">
             <span className="kicker">In 90 minutes</span>
-            <Headline text="In this webinar you will…" mark={['will…']} />
+            <Headline text="What we’ll actually do" mark={['actually']} />
           </div>
         </div>
 
@@ -43,10 +45,10 @@ export default function YouWill() {
             </div>
           ))}
           <div className="card card--glass card--glass-cta reveal" data-delay="3" style={{ '--i': 5 } as React.CSSProperties}>
-            <h3 className="d3">Ready to see it for yourself?</h3>
-            <p className="body">Seats are limited so the session stays intimate.</p>
+            <h3 className="d3">Come and find yours</h3>
+            <p className="body">Free, live, and small enough that there’s room for your questions.</p>
             <div style={{ marginTop: 'var(--s-2)' }}>
-              <RegisterButton tone="ink">Save my seat</RegisterButton>
+              <RegisterButton tone="ink">Save my free seat</RegisterButton>
             </div>
           </div>
         </div>

@@ -32,10 +32,14 @@ export default function Footer() {
               target={HAS_FORM ? '_blank' : undefined}
               rel={HAS_FORM ? 'noopener noreferrer' : undefined}
             >
-              Register →
+              Save my seat →
             </a>
           </nav>
         </div>
+
+        <p className="footer-privacy">
+          We’ll only email you about this session. Unsubscribe any time.
+        </p>
 
         <div className="footer-base">
           <span>© 2026 Soul in Motion. All rights reserved.</span>

@@ -49,6 +49,8 @@ export default function Motion() {
     // lets the screenshot helper size a full-page capture
     document.documentElement.dataset.pageHeight = String(document.body.scrollHeight);
 
+
+
     return () => {
       window.clearTimeout(fallback);
       window.removeEventListener('scroll', onScroll);

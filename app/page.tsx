@@ -14,10 +14,13 @@ import Testimonials from '@/components/sections/Testimonials';
 import YouWill from '@/components/sections/YouWill';
 
 /**
- * Ten sections, root to crown. The reader is never more than two screens
- * from a register button: header, hero, three promo strips, a button in
- * §3/§4/§6/§7, the form itself, the final call, the footer, and on phones
- * a sticky bar.
+ * Ten sections, root to crown — and the chakra order now actually holds, since
+ * the testimonial wall (solar, 3rd) sits third instead of seventh. That move is
+ * also the conversion one: proof lands before biography, and immediately after
+ * the promises it is proving.
+ *
+ * The two strips each carry a different fact — it is free, and you keep the
+ * recording — rather than restating scarcity the page cannot quantify.
  */
 export default function LandingPage() {
   return (
@@ -28,28 +31,22 @@ export default function LandingPage() {
         <Patterns />
         <PromoStrip
           tone="gold"
-          label="Limited seats"
-          text="Seats are kept small so the experience stays powerful."
-          cta="Register now"
+          label="First session free"
+          text="Your first Soul in Motion session costs nothing. No card, nothing to buy — just show up."
+          cta="Save my free seat"
         />
         <YouWill />
+        <Testimonials />
         <Flow />
         <PromoStrip
           tone="ink"
-          label="Reminder"
-          text="90-minute live session on Zoom · Date announced soon"
-          cta="Reserve your spot"
+          label="The take-home"
+          text="Everyone who registers gets the full session recording to keep."
+          cta="Send it to me"
         />
         <Quote />
         <LiveExperience />
-        <Testimonials />
         <Host />
-        <PromoStrip
-          tone="gold"
-          label="Seats filling"
-          text="Spots are limited to keep the experience powerful."
-          cta="Secure my spot"
-        />
         <Register />
         <FinalCta />
       </main>

@@ -11,7 +11,7 @@ type Props = {
 
 /** The single register action. Opens the Google Form in a new tab. */
 export default function RegisterButton({
-  children = 'Reserve your spot',
+  children = 'Save my free seat',
   size = 'md',
   tone = 'clay',
   block = false,

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import RegisterButton from './RegisterButton';
+import { DATE_SHORT, HAS_DATE } from '@/lib/event';
 
 /**
  * Mobile only (CSS hides it wider than 900px). Slides up once the hero has
@@ -36,10 +37,10 @@ export default function StickyBar() {
   return (
     <div className={`sticky-bar${on ? ' is-on' : ''}`} aria-hidden={!on}>
       <span>
-        <b>Limited seats</b>
-        <small>90 min · Live on Zoom</small>
+        <b>Free · 90 min</b>
+        <small>{HAS_DATE ? `${DATE_SHORT} · on Zoom` : 'Live on Zoom'}</small>
       </span>
-      <RegisterButton size="sm">Register</RegisterButton>
+      <RegisterButton size="sm">Save my seat</RegisterButton>
     </div>
   );
 }
