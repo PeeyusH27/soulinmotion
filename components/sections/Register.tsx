@@ -19,11 +19,11 @@ const FAQS = [
   },
   {
     q: 'Will there be a sales pitch at the end?',
-    a: 'No. The full ninety minutes is the session. If you want to work with me afterwards you’re welcome to ask, but nothing is sold on the call.',
+    a: 'No. There is no sales pitch in this webinar. I will offer the 7-day chakra meditation series in the session, but there is no pressure to buy anything.',
   },
   {
     q: 'Will it be recorded?',
-    a: 'Yes — everyone who registers is sent the full recording afterwards, including the closing chakra meditation. So register even if you already know you can’t make it live.',
+    a: 'No recordings are provided for the 90-minute webinar, because it is a live experience. If you miss it after registering, you will be provided a link for the next live webinar.',
   },
   {
     q: 'Do I have to be on camera or speak?',
@@ -34,8 +34,8 @@ const FAQS = [
     a: 'Not at all. It is built for beginners as well as people who already have some experience with energy work, yoga or personal growth — bring experience if you have it and it will go further.',
   },
   {
-    q: 'Is this a meditation or a learning session?',
-    a: 'Both. You’ll understand the concepts behind your mind and patterns, practise a basic NLP technique live, and then move into a guided chakra meditation.',
+    q: 'Is it a meditation?',
+    a: 'Both. You’ll understand the concepts and experience the techniques live, and take away things to practice.',
   },
   {
     q: 'What should I bring?',
@@ -43,7 +43,7 @@ const FAQS = [
   },
   {
     q: 'What if I can’t make it live?',
-    a: 'Register anyway. The recording goes to everyone on the list, and you’ll hear about the next live session first.',
+    a: 'Register anyway. In case you miss the webinar, you will be provided a link for the next live webinar.',
   },
 ];
 

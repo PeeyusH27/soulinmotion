@@ -30,7 +30,7 @@ export default function Host() {
         <div className="host-copy reveal" data-delay="1">
           <span className="kicker">Your host</span>
           <h2 className="d2">Shradha Saha</h2>
-          <p className="host-role">Flow &amp; Movement Coach · Mumbai</p>
+          <p className="host-role">Flow &amp; Movement Coach</p>
 
           <div className="chips">
             {SPECIALISMS.map((tag) => <span className="chip" key={tag}>{tag}</span>)}

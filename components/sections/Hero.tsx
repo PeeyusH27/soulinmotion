@@ -41,28 +41,18 @@ export default function Hero() {
           </p>
 
           <h1 className="hero-title reveal" data-delay="1">
-            <span className="hero-line">See clearly.</span>
-            <span className="hero-line">Question deeply.</span>
+            <span className="hero-line hero-line--headline">
+              Struggling with relationships, health or money?
+            </span>
             <span className="hero-line hero-line--accent">
-              Live freely.
-              <svg className="hero-sweep" viewBox="0 0 340 22" preserveAspectRatio="none" aria-hidden="true">
-                <defs>
-                  <linearGradient id="sweep" x1="0" y1="0" x2="1" y2="0">
-                    <stop offset="0%" stopColor="#E8C980" />
-                    <stop offset="100%" stopColor="#E8A88F" />
-                  </linearGradient>
-                </defs>
-                <path d="M6 15 C 90 4, 230 22, 334 9" />
-              </svg>
+              Your patterns need an exchange program.
+            </span>
+            <span className="hero-line hero-line--accent hero-line--identity">
+              And you need a new identity.
             </span>
           </h1>
 
-          <p className="hero-lead reveal" data-delay="2">
-            A free 90-minute live session with Shradha Saha on the patterns running your life —
-            where they came from, how your body holds them, and the one practice that loosens them.
-          </p>
-
-          <div className="hero-actions reveal" data-delay="3">
+          <div className="hero-actions reveal" data-delay="2">
             <div className="hero-buttons">
               <RegisterButton size="lg" tone="gold">Save my free seat</RegisterButton>
               <a className="hero-link" href="#flow">
@@ -75,7 +65,7 @@ export default function Hero() {
             </p>
           </div>
 
-          <dl className="hero-meta reveal" data-delay="4">
+          <dl className="hero-meta reveal" data-delay="3">
             {META.map(({ k, v }) => (
               <div key={k}>
                 <dt>{k}</dt>
@@ -83,6 +73,7 @@ export default function Hero() {
               </div>
             ))}
           </dl>
+
         </div>
 
         <div className="hero-art">

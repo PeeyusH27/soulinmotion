@@ -11,7 +11,7 @@
  */
 export const EVENT = {
   /** e.g. 'Thursday 18 September' */
-  date: 'Saturday 5 September',
+  date: 'Sunday, 6th September',
   /** e.g. '7:00 pm IST' */
   time: '11:00 am IST',
 

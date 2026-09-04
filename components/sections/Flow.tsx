@@ -42,6 +42,10 @@ export default function Flow() {
           <Headline text="A powerful flow — seven steps, ninety minutes" mark={['flow']} />
         </div>
 
+        <p className="lead reveal" data-delay="1" style={{ maxWidth: '62ch', marginBottom: 'var(--s-4)', color: 'var(--on-ink-2)' }}>
+          A free 90-minute live session with Shradha Saha on the patterns running your life — where they came from, how your body holds them, and the one practice that loosens them.
+        </p>
+
         <div className="steps">
           <div>{left.map((_, i) => <Step i={i} key={i} />)}</div>
           <div>

@@ -2,18 +2,14 @@ import Headline from '../Headline';
 import { Check } from '../Icons';
 
 /**
- * Written as scenes rather than diagnoses. Nobody has ever thought "I feel
- * stuck in repeating patterns" about themselves — they think "why do I always
- * do this?". Each line carries a time on the clock or another person in the
- * room, and the last one picks a fight with the category on purpose.
+ * Session-fit copy aligned to the latest brief from Shradha.
  */
 const ITEMS = [
-  'You’ve done the courses and read the books — and still had the same argument last week.',
-  'You decide things at 2 a.m. that you’ve talked yourself out of by 9.',
-  'You can name exactly what you should do, and still don’t do it.',
-  'People tell you you’re the calm one. Your body disagrees.',
-  'Something shifted once in a meditation and you’ve never found your way back to it.',
-  'You’re curious about chakras and tired of being told to just raise your vibration.',
+  'You’ve done the courses and read the books — but life still feels painful.',
+  'You know what needs to change, but keep finding yourself in the same patterns.',
+  'You are totally lost and trying to find a way to resolve your struggles.',
+  'You’re curious about chakras and want to experience them beyond concepts and labels.',
+  'You’re ready to stop becoming someone else and start uncovering who you already have the potential to be.',
 ];
 
 /** §2 — root chakra: the ground you stand on. */
