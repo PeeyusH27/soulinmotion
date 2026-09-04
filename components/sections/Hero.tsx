@@ -61,7 +61,7 @@ export default function Hero() {
               </a>
             </div>
             <p className="hero-note">
-              First session free · Recording sent to everyone who registers
+              First session free
             </p>
           </div>
 

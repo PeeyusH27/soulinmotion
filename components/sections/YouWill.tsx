@@ -10,7 +10,7 @@ const ITEMS = [
   { Icon: FunnelIcon, title: 'Find the question underneath it', text: 'Most patterns are held in place by one question you ask on repeat. You’ll find yours.' },
   { Icon: LotusIcon, title: 'See where your body is holding it', text: 'Which centre carries the pattern — and what that tells you about how to work with it.' },
   { Icon: BrainIcon, title: 'Learn one interruption you can use tomorrow', text: 'A simple NLP pattern-interrupt, practised live on the call rather than described.' },
-  { Icon: MeditateIcon, title: 'Close with a guided chakra meditation', text: 'Twenty minutes, root to crown. You get the recording to keep.' },
+  { Icon: MeditateIcon, title: 'Close with a guided chakra meditation', text: 'Twenty minutes, root to crown.' },
 ];
 
 /** §3 — sacral chakra: feeling and flow. Every promise visible at once. */

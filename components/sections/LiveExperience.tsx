@@ -20,7 +20,6 @@ const KEEP = [
   'One pattern of yours, written down and mapped.',
   'The question that’s been holding it in place.',
   'A pattern-interrupt you can run in under a minute.',
-  'The full session recording, including the meditation, to keep.',
 ];
 
 export default function LiveExperience() {

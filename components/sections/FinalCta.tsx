@@ -18,7 +18,6 @@ export default function FinalCta() {
           {HAS_DATE ? ` ${DATE_LABEL}.` : ' Register now and you’ll hear the date first.'}
         </p>
         <RegisterButton size="lg">Save my free seat</RegisterButton>
-        <p className="final-note">Free · Recording sent to everyone who registers · Nothing to buy</p>
       </div>
     </section>
   );

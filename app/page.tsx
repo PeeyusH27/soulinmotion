@@ -18,9 +18,6 @@ import YouWill from '@/components/sections/YouWill';
  * the testimonial wall (solar, 3rd) sits third instead of seventh. That move is
  * also the conversion one: proof lands before biography, and immediately after
  * the promises it is proving.
- *
- * The two strips each carry a different fact — it is free, and you keep the
- * recording — rather than restating scarcity the page cannot quantify.
  */
 export default function LandingPage() {
   return (
@@ -41,7 +38,7 @@ export default function LandingPage() {
         <PromoStrip
           tone="ink"
           label="The take-home"
-          text="Everyone who registers gets the full session recording to keep."
+          text="Everything you need to start changing the pattern immediately."
           cta="Send it to me"
         />
         <Quote />

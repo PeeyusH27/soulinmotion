@@ -32,7 +32,7 @@ const mono = JetBrains_Mono({
 export const metadata: Metadata = {
   title: 'Free live webinar: the patterns running your life — Soul in Motion',
   description:
-    'Why do you keep ending up in the same argument, the same job, the same 3 a.m. spiral? A free 90-minute live session with Shradha Saha on the patterns underneath it — and the chakra and NLP work that interrupts them. Live on Zoom, recording sent to everyone who registers.',
+    'Why do you keep ending up in the same argument, the same job, the same 3 a.m. spiral? A free 90-minute live session with Shradha Saha on the patterns underneath it — and the chakra and NLP work that interrupts them. Live on Zoom.',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

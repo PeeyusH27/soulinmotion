@@ -20,8 +20,6 @@ export const EVENT = {
 
   /** the session costs nothing to attend */
   isFree: true,
-  /** everyone who registers is sent the full recording afterwards */
-  hasRecording: true,
   /** nothing is sold on the call */
   hasPitch: false,
 

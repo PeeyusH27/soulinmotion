@@ -58,7 +58,7 @@ components/
     Host            §8 portrait, specialisms and the host's story (ajna)
     Register        §9 Google Form button + embed, event badges, FAQ
     FinalCta        §10 crown on ink, the largest button on the page
-lib/event.ts      the date, time, price, recording and seat cap — one place
+lib/event.ts      the date, time, price and seat cap — one place
 lib/chakras.ts    typed manifest for the chakra assets
 lib/register.ts   the form URL and its embed variant
 ```
@@ -112,11 +112,11 @@ Three sections change shape rather than just stacking:
 ## Before this goes live
 
 **Set the date.** `lib/event.ts` holds every fact about the session — the date,
-the time, the duration, whether it is free, whether a recording is sent, and the
-seat cap. `date` and `time` are the only two blanks. Fill them and the hero, the
-meta row, the promo strips, the sticky bar, the badges, the FAQ and the final
-call all update together. Until then the copy falls back to waitlist wording
-("date announced soon"), which is honest but converts far worse than a real date.
+the time, the duration, whether it is free, and the seat cap. `date` and `time`
+are the only two blanks. Fill them and the hero, the meta row, the promo strips,
+the sticky bar, the badges, the FAQ and the final call all update together.
+Until then the copy falls back to waitlist wording ("date announced soon"),
+which is honest but converts far worse than a real date.
 
 Two more optional wins in the same file and one component:
 
@@ -132,4 +132,4 @@ The copy itself was rewritten against a full audit in Aug 2026: promises became
 deliverables, the "for you if" list became scenes rather than diagnoses, the
 testimonial wall moved from seventh to fourth (which also repairs the root→crown
 chakra order), §7 became "what this is not", and the FAQ was rebuilt around
-objections — free, pitch, recording, camera — instead of information.
+objections — free, pitch, camera — instead of information.
