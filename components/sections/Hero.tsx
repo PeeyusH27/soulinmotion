@@ -60,8 +60,7 @@ export default function Hero() {
                 <ArrowLine />
               </a>
             </div>
-            <p className="hero-note">
-              First session free
+            <p className="hero-note">              First session free
             </p>
           </div>
 

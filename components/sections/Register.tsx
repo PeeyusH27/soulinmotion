@@ -22,6 +22,10 @@ const FAQS = [
     a: 'No. There is no sales pitch in this webinar. I will offer the 7-day chakra meditation series in the session, but there is no pressure to buy anything.',
   },
   {
+    q: 'Will it be recorded?',
+    a: 'No recordings are provided for the 90-minute webinar, because it is a live experience. If you miss it after registering, you will be provided a link for the next live webinar.',
+  },
+  {
     q: 'Do I have to be on camera or speak?',
     a: 'No. Cameras are optional and the chat is enough. Nobody is put on the spot, and you share only if you want to.',
   },
