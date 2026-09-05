@@ -1,5 +1,8 @@
+'use client';
+
 import Link from 'next/link';
-import { HAS_FORM, REGISTER_HREF } from '@/lib/register';
+import { HAS_FORM, REGISTER_HREF, USE_MODAL } from '@/lib/register';
+import { useRegister } from './RegisterProvider';
 
 const NAV = [
   { label: 'The webinar', href: '#about' },
@@ -9,6 +12,8 @@ const NAV = [
 ];
 
 export default function Footer() {
+  const { openRegister } = useRegister();
+
   return (
     <footer className="site-footer">
       <div className="wrap">
@@ -26,14 +31,20 @@ export default function Footer() {
             {NAV.map((item) => (
               <Link key={item.href} href={item.href}>{item.label}</Link>
             ))}
-            <a
-              className="is-cta"
-              href={REGISTER_HREF}
-              target={HAS_FORM ? '_blank' : undefined}
-              rel={HAS_FORM ? 'noopener noreferrer' : undefined}
-            >
-              Save my seat →
-            </a>
+            {USE_MODAL ? (
+              <button className="is-cta" type="button" onClick={() => openRegister('footer')}>
+                Save my seat →
+              </button>
+            ) : (
+              <a
+                className="is-cta"
+                href={REGISTER_HREF}
+                target={HAS_FORM ? '_blank' : undefined}
+                rel={HAS_FORM ? 'noopener noreferrer' : undefined}
+              >
+                Save my seat →
+              </a>
+            )}
           </nav>
         </div>
 

@@ -10,18 +10,84 @@ npm install
 npm run dev      # http://localhost:3000
 ```
 
-## Registration (Google Form)
+## Registration
 
-Every register button on the page opens the same Google Form, and the
-register section embeds it. Point it at your form:
+Registration is a built-in form on a single panel, in three labelled sections.
+It opens as a dialog from every register button on the page, and the same
+component renders inline inside the register section.
+
+It is themed off §1: ink ground, cream type, the same three drifting glow orbs,
+and gold for the action — which is what gold already means everywhere else on
+this page. The completion meter's petals take their hue from the chakra the
+form has reached, lifted toward the paper tone so the jewel tones read on ink. Submissions go to Supabase, and are mirrored into a Google
+Sheet if you set one up.
+
+### 1. Supabase — required
+
+Create a project, then in **SQL Editor → New query** run
+[`supabase/registrations.sql`](supabase/registrations.sql). From
+**Project Settings → API** copy the project URL and the **service role** key:
 
 ```bash
 cp .env.example .env.local
-# NEXT_PUBLIC_REGISTER_URL=https://docs.google.com/forms/d/e/<id>/viewform
+# SUPABASE_URL=https://<project>.supabase.co
+# SUPABASE_SERVICE_ROLE_KEY=<service role key>
 ```
 
-Until that is set the buttons scroll to the register section, which says what
-is missing. The URL is read in `lib/register.ts`.
+The service-role key bypasses row-level security, so it is server-only — it is
+read in `lib/store.ts` from an API route and must never be renamed to
+`NEXT_PUBLIC_*`. Until both are set the form returns a "not connected yet"
+message and the register section says which variables are missing.
+
+Registrations are keyed on email: registering twice updates the first row
+rather than creating a second seat.
+
+### 2. Google Sheet — optional mirror
+
+Open the sheet that should hold registrations, go to **Extensions → Apps
+Script**, and paste [`scripts/sheets-webhook.gs`](scripts/sheets-webhook.gs)
+over `Code.gs`. Set `SECRET` to a long random string, then **Deploy → New
+deployment → Web app** with *Execute as: Me* and *Who has access: Anyone*.
+Copy the `/exec` URL:
+
+```bash
+# SHEETS_WEBHOOK_URL=https://script.google.com/macros/s/<id>/exec
+# SHEETS_WEBHOOK_SECRET=<the same string as SECRET in the script>
+```
+
+The mirror is best-effort by design: if the sheet is unreachable the
+registration still succeeds and the failure is logged, because the seat is
+already saved in Supabase.
+
+### 3. WhatsApp community
+
+The success screen's main action is the WhatsApp community invite:
+
+```bash
+# NEXT_PUBLIC_WHATSAPP_URL=https://chat.whatsapp.com/<invite>
+```
+
+Leave it empty and the button is omitted rather than pointing nowhere.
+
+### Falling back to the Google Form
+
+The old form is still wired up as an escape hatch. Set
+`NEXT_PUBLIC_REGISTER_MODE=google` and every button reverts to opening
+`NEXT_PUBLIC_REGISTER_URL` in a new tab. The modal also offers that link once a
+submission has failed twice, so it is worth keeping the URL set.
+
+### Changing the questions
+
+`lib/registration.ts` is the only file to edit. It holds the section headings,
+the dial codes, the options, the city suggestions and their aliases, which
+fields are required, and the validation rules — and both the browser and the
+API route import it, so a field cannot be checked one way on the client and
+another on the server. A new column also needs adding to
+`supabase/registrations.sql` and to `HEADERS` in the Apps Script.
+
+`CITIES` is a suggestion list, not a closed one: the city field is a combobox,
+so anything typed is accepted. `CITY_ALIASES` is what makes searching
+"Bangalore" find Bengaluru — extend that rather than renaming the cities.
 
 ## Structure
 
@@ -34,7 +100,16 @@ app/
 components/
   Header          sticky, register button at every width, chakra progress rail
   Footer          nav + register link
-  RegisterButton  the single register action (opens the form in a new tab)
+  RegisterButton  the single register action; opens the dialog, or the Google
+                  Form in a new tab when NEXT_PUBLIC_REGISTER_MODE=google
+  RegisterProvider  mounted once in the layout; every CTA opens the one dialog
+  RegisterModal   the <dialog> shell — focus trap, Escape, scroll lock
+  RegisterForm    the form itself, used by the dialog and inline in §9
+  RegisterCombo   the city field: a dropdown you can also type into, so a town
+                  that is not on the list never blocks a registration
+  RegisterPetals  the lotus-petal completion meter, the mandala watermark and
+                  §1's glow orbs (rendered by the dialog shell, which does not
+                  scroll — inside the form they would slide away)
   PromoStrip      gold / ink reminder strip between sections
   Badge           live · seats · zoom · time · date pills
   StickyBar       mobile bottom bar; hides while the register section is visible
@@ -56,11 +131,17 @@ components/
     Quote           §6 the line on a heart-green wash, signed
     LiveExperience  §7 "what this is not" (throat) + what you leave with (sage)
     Host            §8 portrait, specialisms and the host's story (ajna)
-    Register        §9 Google Form button + embed, event badges, FAQ
+    Register        §9 the registration form inline, event badges, FAQ
     FinalCta        §10 crown on ink, the largest button on the page
 lib/event.ts      the date, time, price and seat cap — one place
 lib/chakras.ts    typed manifest for the chakra assets
-lib/register.ts   the form URL and its embed variant
+lib/register.ts     modal vs google mode, the WhatsApp url, the form fallback
+lib/registration.ts the fields, options and validation — shared client/server
+lib/store.ts        the Supabase write and the Sheets mirror
+lib/calendar.ts     the Google Calendar link and .ics for the success screen
+app/api/register/   the POST endpoint: bot traps, rate limit, validate, store
+supabase/           the table definition to run once in the SQL editor
+scripts/sheets-webhook.gs  the Apps Script that appends to the Sheet
 ```
 
 ## Assets

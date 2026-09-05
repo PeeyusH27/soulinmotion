@@ -15,6 +15,13 @@ export const EVENT = {
   /** e.g. '7:00 pm IST' */
   time: '11:00 am IST',
 
+  /**
+   * The same moment as `date` + `time`, machine-readable, so the success screen
+   * can hand people a calendar file. Leave it empty and the calendar button
+   * simply does not appear — it is never guessed from the prose above.
+   */
+  startISO: '2026-09-06T11:00:00+05:30',
+
   durationLabel: '90 minutes',
   where: 'Live on Zoom',
 
@@ -49,3 +56,9 @@ export const DATE_SHORT = HAS_DATE ? EVENT.date : 'Date announced soon';
 
 export const HAS_SEATS = EVENT.seats > 0;
 export const SEATS_LABEL = HAS_SEATS ? `${EVENT.seats} seats` : '';
+
+export const HAS_START = EVENT.startISO.trim().length > 0;
+
+/** ISO instants for the calendar file: start, and start + the session length */
+export const START_AT = HAS_START ? new Date(EVENT.startISO) : null;
+export const END_AT = START_AT ? new Date(START_AT.getTime() + 90 * 60 * 1000) : null;

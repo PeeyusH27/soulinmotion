@@ -3,8 +3,9 @@
 import { useState } from 'react';
 import Headline from '../Headline';
 import { EventBadges } from '../Badge';
+import RegisterForm from '../RegisterForm';
 import RegisterButton from '../RegisterButton';
-import { CAN_EMBED, EMBED_URL, HAS_FORM } from '@/lib/register';
+import { HAS_FORM, REGISTER_URL, USE_MODAL } from '@/lib/register';
 
 /**
  * Objections first, information second. The five questions that used to be here
@@ -47,7 +48,7 @@ const FAQS = [
   },
 ];
 
-/** §8 — the Google Form. Button first, embed underneath, questions alongside. */
+/** §8 — the form itself, in full, with the objections answered alongside it. */
 export default function Register() {
   const [open, setOpen] = useState<number | null>(0);
 
@@ -85,28 +86,30 @@ export default function Register() {
         </div>
 
         <div className="form-card reveal" data-delay="1">
-          <h3 className="d3">Yes, save my seat</h3>
-          <RegisterButton size="lg" block>Save my free seat</RegisterButton>
-          <p className="form-fine">Free · No card needed · Unsubscribe any time</p>
-
-          {CAN_EMBED && <div className="form-or">or fill it in right here</div>}
-
-          {CAN_EMBED ? (
-            <iframe
-              className="form-embed"
-              src={EMBED_URL}
-              title="Soul in Motion webinar registration"
-              loading="lazy"
-            >
-              Loading…
-            </iframe>
-          ) : HAS_FORM ? null : (
+          {USE_MODAL ? (
+            /* the same component the dialog renders, so the two can never drift */
+            <RegisterForm variant="inline" source="register-section" />
+          ) : HAS_FORM ? (
+            <>
+              <h3 className="d3">Yes, save my seat</h3>
+              <RegisterButton size="lg" block>Save my free seat</RegisterButton>
+              <p className="form-fine">Free · No card needed · Unsubscribe any time</p>
+              <iframe
+                className="form-embed"
+                src={`${REGISTER_URL.replace(/\/viewform.*$/, '')}/viewform?embedded=true`}
+                title="Soul in Motion webinar registration"
+                loading="lazy"
+              >
+                Loading…
+              </iframe>
+            </>
+          ) : (
             <div className="form-missing">
-              <b>Registration form not connected yet.</b>
+              <b>Registration is not connected yet.</b>
               <span>
-                Add the Google Form share link as <code>NEXT_PUBLIC_REGISTER_URL</code> in{' '}
-                <code>.env.local</code>. Every register button on the page then opens it and the
-                form appears here.
+                Set <code>SUPABASE_URL</code> and <code>SUPABASE_SERVICE_ROLE_KEY</code> in{' '}
+                <code>.env.local</code> to switch the form on, or set{' '}
+                <code>NEXT_PUBLIC_REGISTER_MODE=google</code> to fall back to the Google Form.
               </span>
             </div>
           )}

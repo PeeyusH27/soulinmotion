@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Fraunces, JetBrains_Mono, Manrope } from 'next/font/google';
 import Motion from '@/components/Motion';
+import RegisterProvider from '@/components/RegisterProvider';
 import './globals.css';
 
 /* Display: a soft serif, set at 500–600 so headlines carry weight. */
@@ -39,8 +40,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={`${fraunces.variable} ${manrope.variable} ${mono.variable}`}>
       <body>
-        {children}
-        <Motion />
+        <RegisterProvider>
+          {children}
+          <Motion />
+        </RegisterProvider>
       </body>
     </html>
   );
