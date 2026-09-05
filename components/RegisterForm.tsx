@@ -3,7 +3,7 @@
 import { useCallback, useId, useMemo, useRef, useState } from 'react';
 import RegisterPetals, { RegisterGlow, RegisterMandala, hueFor } from './RegisterPetals';
 import RegisterCombo from './RegisterCombo';
-import { ArrowRight, CalendarIcon, Check, ClockIcon, GlobeIcon, LockIcon, MailIcon } from './Icons';
+import { ArrowRight, Check, ClockIcon, GlobeIcon, LockIcon, MailIcon } from './Icons';
 import { DATE_VALUE, EVENT, TIME_VALUE } from '@/lib/event';
 import { HAS_FORM, HAS_WHATSAPP, REGISTER_URL, WHATSAPP_URL } from '@/lib/register';
 import {
@@ -20,7 +20,6 @@ import {
   progressOf,
   validate,
 } from '@/lib/registration';
-import { calendarLinks } from '@/lib/calendar';
 
 type Props = {
   /** 'modal' sits in the dialog; 'inline' is the same form inside §8 */
@@ -378,28 +377,11 @@ function splitDate(value: string) {
 
 /** The screen after a successful write: the WhatsApp community is the one action. */
 function Success({ name }: { name: string }) {
-  const cal = calendarLinks();
   const { weekday, dayMonth } = splitDate(DATE_VALUE);
 
   return (
     <div className="rf rf--done">
-      <RegisterMandala />
-
-      <div className="rf-bloom" aria-hidden="true">
-        <svg viewBox="0 0 120 120">
-          {[0, 45, 90, 135, 180, 225, 270, 315].map((deg, i) => (
-            /* the rotation is a custom property, not a transform attribute: the
-               bloom animates `transform`, and a CSS transform silently overrides
-               SVG's — which would stack all eight petals on top of each other */
-            <path
-              key={deg}
-              d="M60 60C46 42 46 26 60 8c14 18 14 34 0 52z"
-              style={{ '--i': i, '--rot': `${deg}deg` } as React.CSSProperties}
-            />
-          ))}
-          <circle cx="60" cy="60" r="7" />
-        </svg>
-      </div>
+      <SeatedFigure />
 
       <h3 className="d3 rf-done-title">
         {name ? `Your seat is saved, ${name}.` : 'Your seat is saved.'}
@@ -425,17 +407,6 @@ function Success({ name }: { name: string }) {
         <MailIcon /> The Zoom link is on its way to your inbox.
       </p>
 
-      {cal && (
-        <div className="rf-cal">
-          <a className="rf-cal-btn" href={cal.google} target="_blank" rel="noopener noreferrer">
-            <CalendarIcon /> Add to Google Calendar
-          </a>
-          <a className="rf-cal-btn" href={cal.ics} download="soul-in-motion.ics">
-            <DownloadIcon /> Download .ics
-          </a>
-        </div>
-      )}
-
       {HAS_WHATSAPP ? (
         <>
           <p className="rf-done-lead">
@@ -457,14 +428,34 @@ function Success({ name }: { name: string }) {
   );
 }
 
-/* Downward arrow into a tray — the .ics chip's cue that this one saves a file
-   rather than opening a tab, which is the only difference a reader cares about
-   between the two calendar chips. */
-function DownloadIcon() {
+/**
+ * A figure seated in the pose the session teaches, drawn on the same grid, the
+ * same thin stroke and the same gold as the rest of the icon set. Hand-drawn
+ * rather than dropped in from a stock library so the last screen still reads as
+ * the page's own hand.
+ */
+function SeatedFigure() {
   return (
-    <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor"
-      strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M12 3v11m0 0 4-4m-4 4-4-4M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2" />
+    <svg className="rf-figure" viewBox="0 0 120 120" aria-hidden="true">
+      {/* the halo it sits in, carried over from the mandala it replaces */}
+      <circle className="rf-figure-ring" cx="60" cy="62" r="46" />
+      <circle className="rf-figure-ring" cx="60" cy="62" r="54" strokeDasharray="2 8" />
+
+      <circle cx="60" cy="30" r="9" />
+
+      {/* torso: shoulders down to the hips, drawn narrow so the arms read as
+          separate limbs rather than merging into one silhouette */}
+      <path d="M51.5 47.5c-1.8 7.5-2.4 15.4-2 23" />
+      <path d="M68.5 47.5c1.8 7.5 2.4 15.4 2 23" />
+      <path d="M51.5 47.5c2.6-2.6 5.4-3.9 8.5-3.9s5.9 1.3 8.5 3.9" />
+
+      {/* arms falling from each shoulder to rest on the knee below it */}
+      <path d="M51.8 48.6C44 53 38.2 59.6 34.6 68.4" />
+      <path d="M68.2 48.6C76 53 81.8 59.6 85.4 68.4" />
+
+      {/* crossed legs: knees wide at either side, shins folded in front */}
+      <path d="M49.5 70.5c-6.3.6-11.5 3.1-15.6 7.4-1.9 2-3.1 4.3-3.6 6.8 8.8 4.4 18.7 6.6 29.7 6.6s20.9-2.2 29.7-6.6c-.5-2.5-1.7-4.8-3.6-6.8-4.1-4.3-9.3-6.8-15.6-7.4" />
+      <path d="M44.6 84.2c4.6-4.6 9.7-6.9 15.4-6.9s10.8 2.3 15.4 6.9" />
     </svg>
   );
 }

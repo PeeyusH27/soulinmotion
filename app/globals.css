@@ -1321,6 +1321,15 @@ html.has-motion .reveal.is-in { opacity: 1; transform: none; }
 .rf-dialog.is-closing { animation: rf-out 200ms var(--ease) both; }
 .rf-dialog.is-closing::backdrop { animation: rf-fade 200ms var(--ease) reverse both; }
 
+/* The confirmation is a short, self-contained popup rather than the tall panel
+   the form needs: narrower than the form's 660px so it is not mostly empty, and
+   centred at every width — including the phone sizes where the form deliberately
+   becomes a bottom sheet. :has, so the same dialog element carries both. */
+.rf-dialog:has(.rf--done) {
+  width: min(460px, calc(100vw - var(--s-3) * 2));
+  margin: auto;
+}
+
 @keyframes rf-in   { from { opacity: 0; transform: translateY(20px) scale(.97); } }
 @keyframes rf-out  { to   { opacity: 0; transform: translateY(10px) scale(.985); } }
 @keyframes rf-fade { from { opacity: 0; } }
@@ -1900,20 +1909,20 @@ html.has-motion .reveal.is-in { opacity: 1; transform: none; }
    takes two lines and a centred icon floats between them */
 .rf-zoom svg { width: 16px; height: 16px; flex: none; opacity: .8; margin-top: 3px; }
 
-.rf-bloom { width: 104px; }
-.rf-bloom svg { width: 100%; height: auto; fill: none; stroke: #E8C980; stroke-width: 1.4; }
-.rf-bloom path {
-  transform-box: view-box;
-  transform-origin: 60px 60px;
-  transform: rotate(var(--rot));
-  animation: rf-bloom var(--slow) var(--ease) both;
-  animation-delay: calc(var(--i) * 70ms);
+/* The seated figure that closes the flow. Sized generously — it is the first
+   thing the eye lands on when the panel swaps from form to confirmation. */
+.rf-figure {
+  width: clamp(112px, 26vw, 140px);
+  height: auto;
+  fill: none;
+  stroke: #E8C980;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  animation: rf-fade var(--slow) var(--ease) both;
 }
-.rf-bloom circle { fill: #E8C980; stroke: none; animation: rf-fade var(--slow) 560ms var(--ease) both; }
-@keyframes rf-bloom {
-  from { opacity: 0; transform: rotate(var(--rot)) scale(.15); }
-  to   { opacity: 1; transform: rotate(var(--rot)) scale(1); }
-}
+/* the halo sits back so the figure itself carries the contrast */
+.rf-figure-ring { stroke: rgba(232, 201, 128, .3); stroke-width: 1; }
 
 /* WhatsApp keeps its own green — a brand mark recoloured stops being a cue.
    Squarer than a pill: at full width a 999px radius reads as a lozenge rather
@@ -1935,36 +1944,6 @@ html.has-motion .reveal.is-in { opacity: 1; transform: none; }
 .rf-wa:hover { background: #1FBE5B; box-shadow: 0 22px 44px -18px rgba(37, 211, 102, .85); }
 .rf-wa .rf-wa-glyph { width: 21px; height: 21px; }
 .rf-wa:hover svg { transform: none; }
-
-/* Calendar actions are chips, not footnotes: at the old --fs-label underline
-   they read as terms-and-conditions, which is the wrong weight for the second
-   most useful thing on the screen. */
-.rf-cal { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
-.rf-cal-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 11px 16px;
-  border-radius: var(--r-pill);
-  font-size: var(--fs-sm);
-  font-weight: 600;
-  color: var(--on-ink);
-  background: rgba(243, 238, 227, .06);
-  border: 1px solid rgba(243, 238, 227, .18);
-  transition: color var(--fast), background var(--fast), border-color var(--fast), transform var(--fast);
-}
-.rf-cal-btn svg { width: 17px; height: 17px; flex: none; opacity: .85; }
-.rf-cal-btn:hover {
-  color: #E8C980;
-  background: rgba(232, 201, 128, .1);
-  border-color: rgba(232, 201, 128, .5);
-  transform: translateY(-1px);
-}
-.rf-cal-btn:hover svg { opacity: 1; }
-
-@media (prefers-reduced-motion: reduce) {
-  .rf-cal-btn:hover { transform: none; }
-}
 
 /* ---------- the inline copy takes the same ink card ---------- */
 /* :has, so the google-mode fallback card keeps its paper styling */
@@ -2001,6 +1980,16 @@ html.has-motion .reveal.is-in { opacity: 1; transform: none; }
   .rf-dialog-inner { border-radius: var(--r-card) var(--r-card) 0 0; }
   .rf-dialog[open] { animation: rf-sheet var(--mid) var(--ease) both; }
   @keyframes rf-sheet { from { opacity: 0; transform: translateY(40px); } }
+
+  /* the form is a sheet on a phone; the confirmation stays a centred popup */
+  .rf-dialog:has(.rf--done) {
+    width: min(460px, calc(100vw - var(--s-3) * 2));
+    max-width: min(460px, calc(100vw - var(--s-3) * 2));
+    margin: auto;
+    border-radius: var(--r-card);
+  }
+  .rf-dialog:has(.rf--done) .rf-dialog-inner { border-radius: var(--r-card); }
+  .rf-dialog:has(.rf--done)[open] { animation: rf-in var(--mid) var(--ease) both; }
   .rf--done { padding-bottom: calc(var(--card-pad) + env(safe-area-inset-bottom, 0px)); }
   .rf-mandala { top: -46px; right: -70px; width: 200px; height: 200px; }
   .rf-glow i { filter: blur(56px); }
@@ -2009,7 +1998,7 @@ html.has-motion .reveal.is-in { opacity: 1; transform: none; }
 /* ---------- reduced motion ---------- */
 @media (prefers-reduced-motion: reduce) {
   .rf--modal { scroll-behavior: auto; }
-  .rf-dialog[open], .rf-dialog.is-closing, .rf-bloom path, .rf-bloom circle,
+  .rf-dialog[open], .rf-dialog.is-closing, .rf-figure,
   .rf-glow i { animation: none; }
   .rf-mandala, .rf-thread--lit, .rf-petal-fill, .rf-petal-line, .rf-petal-rib,
   .rf-choice, .rf-choice-mark svg { transition: none; }
