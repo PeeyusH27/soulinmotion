@@ -18,19 +18,38 @@ export const GROUPS = [
   { n: '03', title: 'What you bring', note: 'Optional — but it changes the session.' },
 ] as const;
 
-/** Dial codes offered in the phone field. India first; the rest are the diaspora. */
+/**
+ * Dial codes offered in the phone field. India first; the rest are the diaspora.
+ *
+ * `min`/`max` are the length of the national number *after* the dial code and
+ * after any trunk 0 — so a rule here rejects a number that could never connect,
+ * rather than merely one that looks unusual. Where a country's mobile and
+ * landline lengths differ the range spans both: refusing a real number is a lost
+ * registration, while accepting a slightly odd one costs nothing.
+ *
+ * `trunk` marks the countries that write their national numbers with a leading
+ * 0. People type that 0 out of habit — "07400 123456" — and it is dropped
+ * before counting rather than pushing the number one digit over the limit.
+ */
 export const DIAL_CODES = [
-  { code: '+91',  label: 'IN +91' },
-  { code: '+1',   label: 'US +1' },
-  { code: '+44',  label: 'UK +44' },
-  { code: '+61',  label: 'AU +61' },
-  { code: '+971', label: 'AE +971' },
-  { code: '+65',  label: 'SG +65' },
-  { code: '+49',  label: 'DE +49' },
-  { code: '+64',  label: 'NZ +64' },
-  { code: '+27',  label: 'ZA +27' },
-  { code: '+60',  label: 'MY +60' },
+  { code: '+91',  label: 'IN +91',  min: 10, max: 10, trunk: true,  sample: '98765 43210' },
+  { code: '+1',   label: 'US +1',   min: 10, max: 10, trunk: false, sample: '415 555 0132' },
+  { code: '+44',  label: 'UK +44',  min: 9,  max: 10, trunk: true,  sample: '7400 123456' },
+  { code: '+61',  label: 'AU +61',  min: 9,  max: 9,  trunk: true,  sample: '412 345 678' },
+  { code: '+971', label: 'AE +971', min: 8,  max: 9,  trunk: true,  sample: '50 123 4567' },
+  { code: '+65',  label: 'SG +65',  min: 8,  max: 8,  trunk: false, sample: '8123 4567' },
+  { code: '+49',  label: 'DE +49',  min: 9,  max: 11, trunk: true,  sample: '151 2345 6789' },
+  { code: '+64',  label: 'NZ +64',  min: 8,  max: 10, trunk: true,  sample: '21 123 4567' },
+  { code: '+27',  label: 'ZA +27',  min: 9,  max: 9,  trunk: true,  sample: '82 123 4567' },
+  { code: '+60',  label: 'MY +60',  min: 9,  max: 10, trunk: true,  sample: '12 345 6789' },
 ] as const;
+
+export type Dial = (typeof DIAL_CODES)[number];
+
+/** the rules for a dial code, or undefined if it is not one we offer */
+export function dialFor(code: string): Dial | undefined {
+  return DIAL_CODES.find((d) => d.code === code);
+}
 
 /**
  * Suggestions for the city field — NOT a closed list. The field is a combobox,
@@ -161,6 +180,17 @@ export function digits(value: string) {
 }
 
 /**
+ * The digits that actually make up the national number: everything non-numeric
+ * removed, and the trunk 0 dropped in the countries that write one. Both the
+ * length check and the stored value go through this, so what we validate is
+ * exactly what we save.
+ */
+export function nationalDigits(dial: string, phone: string) {
+  const d = digits(phone);
+  return dialFor(dial)?.trunk && d.startsWith('0') ? d.replace(/^0+/, '') : d;
+}
+
+/**
  * Validates the whole record and returns one message per bad field. Callers
  * decide which of those messages to *show* — the form only surfaces errors for
  * the step you are on, the API route rejects on any of them.
@@ -169,7 +199,7 @@ export function validate(v: Registration): Errors {
   const e: Errors = {};
   const name = v.name.trim();
   const email = v.email.trim();
-  const phone = digits(v.phone);
+  const phone = nationalDigits(v.dial, v.phone);
   const city = v.city.trim();
 
   if (name.length < 2) e.name = 'Please tell us your name.';
@@ -179,10 +209,18 @@ export function validate(v: Registration): Errors {
   else if (!EMAIL_RE.test(email)) e.email = 'That does not look like an email address.';
   else if (email.length > MAX.email) e.email = 'That is longer than we can store.';
 
-  if (!phone) e.phone = 'A number, so we can share the WhatsApp link.';
-  else if (phone.length < 6 || phone.length > 15) e.phone = 'That number looks incomplete.';
+  const dial = dialFor(v.dial);
+  if (!dial) e.dial = 'Pick a country code.';
 
-  if (!DIAL_CODES.some((d) => d.code === v.dial)) e.dial = 'Pick a country code.';
+  if (!phone) {
+    e.phone = 'A number, so we can share the WhatsApp link.';
+  } else if (dial && (phone.length < dial.min || phone.length > dial.max)) {
+    // naming the expected length beats "that looks wrong": the reader can see
+    // at a glance whether they mistyped or picked the wrong country
+    const expected =
+      dial.min === dial.max ? `${dial.min} digits` : `${dial.min}–${dial.max} digits`;
+    e.phone = `A ${dial.code} number has ${expected}. That is ${phone.length}.`;
+  }
 
   if (!city) e.city = 'Which city are you joining from?';
   else if (city.length > MAX.city) e.city = 'That is longer than we can store.';
@@ -210,7 +248,7 @@ export function normalise(v: Registration) {
   return {
     name: v.name.trim().replace(/\s+/g, ' '),
     email: v.email.trim().toLowerCase(),
-    phone: `${v.dial} ${digits(v.phone)}`,
+    phone: `${v.dial} ${nationalDigits(v.dial, v.phone)}`,
     city: v.city.trim(),
     experience: v.experience,
     heard_from: v.heardFrom,

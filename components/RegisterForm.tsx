@@ -10,6 +10,7 @@ import {
   CITIES,
   CITY_ALIASES,
   DIAL_CODES,
+  dialFor,
   EMPTY,
   EXPERIENCE,
   GROUPS,
@@ -197,7 +198,9 @@ export default function RegisterForm({ variant = 'modal', source = 'unknown', on
             inputMode="tel"
             autoComplete="tel-national"
             maxLength={MAX.phone}
-            placeholder="98765 43210"
+            /* the example follows the country picker, so the field always shows
+               a number of the length it is about to ask for */
+            placeholder={dialFor(values.dial)?.sample ?? '98765 43210'}
             value={values.phone}
             onChange={(e) => set('phone', e.target.value)}
             onBlur={() => blur('phone')}

@@ -79,6 +79,20 @@ export async function saveRegistration(row: Row) {
 }
 
 /**
+ * Google Sheets parses any cell beginning with = + - or @ as a formula, which
+ * turns the perfectly ordinary phone number "+91 98765 43210" into #ERROR! and
+ * lets a registrant who types `=IMPORTXML(...)` as their name run it inside the
+ * sheet. A leading apostrophe is Sheets' own escape for "this is literally
+ * text"; it is consumed on entry, so the cell still reads and exports as the
+ * bare value. Applied on the way out rather than at the source: Supabase stores
+ * these strings correctly and must keep them unprefixed.
+ */
+function sheetSafe<T>(value: T): T | string {
+  if (typeof value !== 'string' || !/^[=+\-@\t\r]/.test(value)) return value;
+  return `'${value}`;
+}
+
+/**
  * Appends the same row to a Google Sheet through an Apps Script Web App.
  * Never throws: the caller has already saved the seat, and a spreadsheet that
  * is a few rows behind is not worth failing a registration over.
@@ -90,7 +104,10 @@ export async function mirrorToSheet(row: Row): Promise<'ok' | 'skipped' | 'faile
     const res = await fetch(SHEETS_URL, {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ secret: SHEETS_SECRET, row }),
+      body: JSON.stringify({
+        secret: SHEETS_SECRET,
+        row: Object.fromEntries(Object.entries(row).map(([k, v]) => [k, sheetSafe(v)])),
+      }),
       signal: AbortSignal.timeout(6000),
       redirect: 'follow',
     });
