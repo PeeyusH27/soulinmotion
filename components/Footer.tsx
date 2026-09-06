@@ -1,7 +1,11 @@
 'use client';
 
 import Link from 'next/link';
-import { HAS_FORM, REGISTER_HREF, USE_MODAL } from '@/lib/register';
+import {
+  HAS_FORM, HAS_INSTAGRAM, HAS_WHATSAPP,
+  INSTAGRAM_URL, REGISTER_HREF, USE_MODAL, WHATSAPP_URL,
+} from '@/lib/register';
+import { InstagramIcon, WhatsAppIcon } from './Icons';
 import { useRegister } from './RegisterProvider';
 
 const NAV = [
@@ -48,9 +52,20 @@ export default function Footer() {
           </nav>
         </div>
 
-        <p className="footer-privacy">
-          We’ll only email you about this session. Unsubscribe any time.
-        </p>
+        {(HAS_INSTAGRAM || HAS_WHATSAPP) && (
+          <div className="footer-social">
+            {HAS_INSTAGRAM && (
+              <a className="is-instagram" href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+                <InstagramIcon />
+              </a>
+            )}
+            {HAS_WHATSAPP && (
+              <a className="is-whatsapp" href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer" aria-label="WhatsApp community">
+                <WhatsAppIcon />
+              </a>
+            )}
+          </div>
+        )}
 
         <div className="footer-base">
           <span>© 2026 Soul in Motion. All rights reserved.</span>

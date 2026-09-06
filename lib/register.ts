@@ -31,3 +31,8 @@ export const REGISTER_HREF = HAS_FORM ? REGISTER_URL : '#register';
 export const WHATSAPP_URL = process.env.NEXT_PUBLIC_WHATSAPP_URL?.trim() || '';
 
 export const HAS_WHATSAPP = /^https?:\/\//.test(WHATSAPP_URL);
+
+/** Instagram, linked from the footer. Hidden entirely when unset. */
+export const INSTAGRAM_URL = process.env.NEXT_PUBLIC_INSTAGRAM_URL?.trim() || '';
+
+export const HAS_INSTAGRAM = /^https?:\/\//.test(INSTAGRAM_URL);

@@ -112,7 +112,7 @@ export default function RegisterForm({ variant = 'modal', source = 'unknown', on
     }
   }
 
-  if (status === 'done') return <Welcome name={values.name.trim().split(' ')[0]} />;
+  if (status === 'done') return <Welcome name={values.name.trim().split(' ')[0]} variant={variant} />;
 
   return (
     <form
@@ -467,7 +467,7 @@ const NEXT_STEPS = [
  * the community is the one action, the session time is the one thing to
  * remember, and the three steps say what happens between now and then.
  */
-function Welcome({ name }: { name: string }) {
+function Welcome({ name, variant = 'modal' }: { name: string; variant?: 'modal' | 'inline' }) {
   const { weekday, dayMonth } = splitDate(DATE_VALUE);
   const cal = calendarLinks();
 
@@ -475,7 +475,10 @@ function Welcome({ name }: { name: string }) {
   const steps = HAS_WHATSAPP ? NEXT_STEPS : NEXT_STEPS.filter((s) => !s.title.startsWith('Join'));
 
   return (
-    <div className="rf rf--done">
+    /* the variant has to ride along: .rf--modal.rf--done is what makes this
+       panel the scroller, and without it a tall welcome is clipped by the
+       shell with no way to reach the button at the bottom */
+    <div className={`rf rf--${variant} rf--done`}>
       <header className="rf-done-head">
         <span className="rf-crest" aria-hidden="true">
           <img src="/green-leaves-logo.png" alt="" width={560} height={512} loading="lazy" decoding="async" />

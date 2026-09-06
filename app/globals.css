@@ -1057,6 +1057,40 @@ html.has-motion .reveal.is-in .icon-line rect, html.has-motion .reveal.is-in .ic
   text-transform: uppercase;
   color: var(--ink-3);
 }
+/* the two social marks, each in its own brand colour so they read as the
+   platforms they are rather than as two more line-art glyphs */
+.footer-social { display: flex; gap: 14px; margin-top: var(--s-3); }
+.footer-social a {
+  display: grid;
+  place-items: center;
+  width: 52px; height: 52px;
+  border: 1px solid rgba(255, 255, 255, .16);
+  border-radius: var(--r-pill);
+  transition: border-color var(--fast), background var(--fast), transform var(--fast);
+}
+.footer-social a:hover { transform: translateY(-2px); }
+.footer-social svg { width: 26px; height: 26px; }
+/* the line-art mark takes the set's stroke; the filled one must not */
+.footer-social svg:not([fill="currentColor"]) { stroke: currentColor; stroke-width: 1.5; fill: none; }
+
+/* Instagram has no single flat colour — the mark is drawn on its gradient, so
+   the glyph takes the gradient and the tile takes a wash of the same hues. */
+.footer-social .is-instagram {
+  color: #E4405F;
+  border-color: rgba(228, 64, 95, .45);
+  background: linear-gradient(135deg, rgba(247, 119, 55, .16), rgba(228, 64, 95, .16) 45%, rgba(150, 47, 191, .16));
+}
+.footer-social .is-instagram:hover {
+  border-color: rgba(228, 64, 95, .8);
+  background: linear-gradient(135deg, rgba(247, 119, 55, .3), rgba(228, 64, 95, .3) 45%, rgba(150, 47, 191, .3));
+}
+.footer-social .is-whatsapp {
+  color: #25D366;
+  border-color: rgba(37, 211, 102, .45);
+  background: rgba(37, 211, 102, .14);
+}
+.footer-social .is-whatsapp:hover { border-color: rgba(37, 211, 102, .8); background: rgba(37, 211, 102, .26); }
+
 .footer-privacy {
   margin-top: var(--s-3);
   font-size: var(--fs-sm);
@@ -1292,6 +1326,7 @@ html.has-motion .reveal.is-in { opacity: 1; transform: none; }
   .final .btn { width: 100%; }
   .footer-top, .footer-base { flex-direction: column; align-items: center; text-align: center; }
   .footer-nav { justify-content: center; }
+  .footer-social { justify-content: center; }
 }
 
 
@@ -1435,6 +1470,10 @@ html.has-motion .reveal.is-in { opacity: 1; transform: none; }
 .rf-dialog:has(.rf--done) {
   width: min(520px, calc(100vw - var(--s-3) * 2));
   margin: auto;
+  /* no 940px ceiling here: the form wants one because a very tall field list
+     reads better capped, but the welcome is a fixed stack that should use
+     every pixel a tall window offers rather than overflow inside one. */
+  max-height: 90svh;
 }
 
 @keyframes rf-in   { from { opacity: 0; transform: translateY(20px) scale(.97); } }
@@ -2048,9 +2087,34 @@ html.has-motion .reveal.is-in { opacity: 1; transform: none; }
 /* the panel is the scroller, not the shell: the meditating ground is painted
    on the shell and has to hold still while a short window scrolls the content */
 .rf--modal.rf--done {
-  max-height: min(90svh, 940px);
+  max-height: 90svh;
   overflow-y: auto;
   overscroll-behavior: contain;
+}
+
+/* ---- the action stays on screen ----
+   The WhatsApp button is the whole point of this screen, so it is the one
+   thing that must never be what the crop eats. It sticks to the foot of the
+   scroller and carries the panel's own ink behind it, so content scrolling
+   underneath passes behind the button rather than showing through it.
+   The negative margin and matching padding let that ink reach the panel's
+   padded edges; the pseudo-element above it fades the incoming content
+   instead of letting it collide with the button's top edge. */
+.rf--modal.rf--done .rf-done-foot {
+  position: sticky;
+  bottom: calc(var(--rf-pad) * -1);
+  z-index: 2;
+  margin: 0 calc(var(--rf-pad) * -1) calc(var(--rf-pad) * -1);
+  padding: var(--s-2) var(--rf-pad) var(--rf-pad);
+  background: var(--ink);
+}
+.rf--modal.rf--done .rf-done-foot::before {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; bottom: 100%;
+  height: 28px;
+  pointer-events: none;
+  background: linear-gradient(to top, var(--ink), transparent);
 }
 .rf--inline.rf--done { padding: var(--s-4) 0; }
 
@@ -2287,13 +2351,26 @@ html.has-motion .reveal.is-in { opacity: 1; transform: none; }
   }
   .rf-dialog:has(.rf--done) .rf-dialog-inner { border-radius: var(--r-card); }
   .rf-dialog:has(.rf--done)[open] { animation: rf-in var(--mid) var(--ease) both; }
-  /* tightened so the WhatsApp button — the whole point of the screen — is
-     visible without scrolling on a 844px-tall phone */
   .rf--modal.rf--done { max-height: 88svh; }
   .rf--done {
-    gap: var(--s-2);
     padding-bottom: calc(var(--rf-pad) + env(safe-area-inset-bottom, 0px));
   }
+  .rf--modal.rf--done .rf-done-foot {
+    padding-bottom: calc(var(--rf-pad) + env(safe-area-inset-bottom, 0px));
+  }
+  .rf-glow i { filter: blur(56px); }
+  .rf-cal { flex-direction: column; gap: 8px; }
+}
+
+/* ---------- tight viewports: tighten the welcome so the CTA survives ----------
+   Narrow OR short, because both run out of room for the same stack: a phone is
+   short on width, a landscape window is short on height. These rules used to
+   live in the 560px width query alone, which left a landscape tablet or a
+   half-height desktop window running full desktop spacing in a window too short
+   to hold it — the crop that ate the WhatsApp button. A 390x844 phone clears
+   800px of height, so the width half of this has to stay. */
+@media (max-width: 560px), (max-height: 800px) {
+  .rf--done { gap: var(--s-2); }
   .rf-crest { width: 54px; height: 54px; box-shadow: 0 0 0 6px rgba(168, 183, 144, .05); }
   .rf-crest img { width: 31px; }
   .rf-done-head { gap: 8px; }
@@ -2302,8 +2379,18 @@ html.has-motion .reveal.is-in { opacity: 1; transform: none; }
   .rf-when-meta { margin-top: 8px; padding-top: 8px; }
   .rf-next { gap: 12px; }
   .rf-done-lead { display: none; }
-  .rf-glow i { filter: blur(56px); }
-  .rf-cal { flex-direction: column; gap: 8px; }
+}
+
+/* Shorter still — a landscape phone. The crest is decoration and the step
+   copy is not, so the crest goes before anything that carries meaning. */
+@media (max-height: 620px) {
+  .rf-crest { display: none; }
+  .rf--done { gap: 14px; }
+  .rf-when { padding: 12px var(--s-2); }
+  /* the floor stays 1.7rem: below it "13th September" breaks in half, which
+     the panel cannot afford. Only the ceiling comes down. */
+  .rf-when-date { font-size: clamp(1.7rem, 1.05rem + 2.6vw, 2.1rem); }
+  .rf-next { gap: 10px; }
 }
 
 /* ---------- reduced motion ---------- */

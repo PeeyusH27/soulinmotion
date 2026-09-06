@@ -279,3 +279,21 @@ export function LotusMini() {
     </svg>
   );
 }
+
+/* ---------- social ----------
+   Instagram sits on the same 24-grid and 1.1 stroke as the rest of the set.
+   WhatsApp is filled rather than stroked for the reason noted on the glyph in
+   RegisterForm: the outline version is unrecognisable at this size. */
+export const InstagramIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <rect x="3" y="3" width="18" height="18" rx="5" />
+    <circle cx="12" cy="12" r="4" />
+    <circle cx="17.2" cy="6.8" r="1.1" fill="currentColor" stroke="none" />
+  </Icon>
+);
+
+export const WhatsAppIcon = (p: IconProps) => (
+  <svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor" stroke="none" {...p}>
+    <path d="M12.04 2a9.9 9.9 0 00-8.5 14.95L2 22l5.2-1.5A9.9 9.9 0 1012.04 2zm0 1.8a8.1 8.1 0 016.9 12.4l-.24.4.6 2.2-2.27-.6-.38.22a8.1 8.1 0 01-11.9-9.9A8.1 8.1 0 0112.04 3.8zm-3.5 3.8c-.18 0-.47.07-.72.34-.25.27-.95.93-.95 2.26s.98 2.62 1.11 2.8c.14.18 1.9 3.02 4.7 4.12 2.32.92 2.8.74 3.3.69.5-.04 1.62-.66 1.85-1.3.23-.64.23-1.19.16-1.3-.07-.12-.25-.19-.53-.32-.27-.14-1.62-.8-1.87-.9-.25-.09-.44-.13-.62.14-.18.27-.71.9-.87 1.08-.16.18-.32.2-.6.07-.27-.14-1.15-.43-2.2-1.36-.81-.72-1.36-1.62-1.52-1.89-.16-.27-.02-.42.12-.55.12-.12.27-.32.4-.48.14-.16.18-.27.28-.45.09-.18.04-.34-.02-.48-.07-.13-.6-1.48-.84-2.03-.2-.48-.4-.42-.55-.43h-.47z" />
+  </svg>
+);
