@@ -36,3 +36,7 @@ graphify-out/
 # bundled asset → CDN url for THAT environment's bucket, so it must not follow
 # the repo between dev and prod.
 scripts/.mahayagya-cms-uploads.json
+
+# Source art kept out of the deploy: anything in public/ is uploaded and
+# publicly downloadable, and these are neither referenced nor needed at runtime.
+local-assets/

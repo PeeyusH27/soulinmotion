@@ -11,7 +11,7 @@
  */
 export const EVENT = {
   /** e.g. 'Thursday 18 September' */
-  date: 'Sunday, 6th September',
+  date: 'Sunday, 13th September',
   /** e.g. '7:00 pm IST' */
   time: '11:00 am IST',
 
@@ -20,7 +20,7 @@ export const EVENT = {
    * can hand people a calendar file. Leave it empty and the calendar button
    * simply does not appear — it is never guessed from the prose above.
    */
-  startISO: '2026-09-06T11:00:00+05:30',
+  startISO: '2026-09-13T11:00:00+05:30',
 
   durationLabel: '90 minutes',
   where: 'Live on Zoom',

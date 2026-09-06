@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import RegisterButton from '../RegisterButton';
 
 const SPECIALISMS = ['Energy work', 'NLP', 'Chakra healing', 'Breathwork', 'Conscious living'];
@@ -23,8 +24,14 @@ export default function Host() {
     >
       <div className="wrap host">
         <div className="reveal">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img className="host-photo" src="/brand/host.png" alt="Shradha Saha" />
+          <Image
+            className="host-photo"
+            src="/brand/host.jpg"
+            alt="Shradha Saha"
+            width={544}
+            height={680}
+            sizes="(max-width: 900px) 340px, 40vw"
+          />
         </div>
 
         <div className="host-copy reveal" data-delay="1">

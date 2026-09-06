@@ -1,6 +1,5 @@
 import Headline from '../Headline';
 import RegisterButton from '../RegisterButton';
-import { LeafIcon } from '../Icons';
 import { DATE_LABEL } from '@/lib/event';
 
 /* The titles were already good; the sub-lines say what actually happens in the
@@ -25,9 +24,11 @@ export default function Flow() {
     const step = STEPS[i];
     return (
       <div className="step reveal" data-delay={(i % 4) + 1}>
-        <span className="step-leaf" aria-hidden="true"><LeafIcon /></span>
+        <span className="step-leaf" aria-hidden="true">
+          <img src="/green-leaves-logo.png" alt="" width={560} height={512} loading="lazy" decoding="async" />
+        </span>
         <div>
-          <b>{step.title}</b>
+          <h3>{step.title}</h3>
           <span>{step.text}</span>
         </div>
       </div>

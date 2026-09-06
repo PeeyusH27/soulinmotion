@@ -1,14 +1,16 @@
 'use client';
 
 import { useCallback, useId, useMemo, useRef, useState } from 'react';
-import RegisterPetals, { RegisterGlow, RegisterMandala, hueFor } from './RegisterPetals';
+import { RegisterGlow, hueFor } from './RegisterPetals';
 import RegisterCombo from './RegisterCombo';
 import { ArrowRight, Check, ClockIcon, GlobeIcon, LockIcon, MailIcon } from './Icons';
 import { DATE_VALUE, EVENT, TIME_VALUE } from '@/lib/event';
+import { calendarLinks } from '@/lib/calendar';
 import { HAS_FORM, HAS_WHATSAPP, REGISTER_URL, WHATSAPP_URL } from '@/lib/register';
 import {
   CITIES,
   CITY_ALIASES,
+  clampNational,
   DIAL_CODES,
   dialFor,
   EMPTY,
@@ -110,7 +112,7 @@ export default function RegisterForm({ variant = 'modal', source = 'unknown', on
     }
   }
 
-  if (status === 'done') return <Success name={values.name.trim().split(' ')[0]} />;
+  if (status === 'done') return <Welcome name={values.name.trim().split(' ')[0]} />;
 
   return (
     <form
@@ -121,15 +123,25 @@ export default function RegisterForm({ variant = 'modal', source = 'unknown', on
       noValidate
     >
       {variant === 'inline' && <RegisterGlow />}
-      <RegisterMandala />
 
+      {/* ---------- masthead: who, what, and how far in you are ---------- */}
       <header className="rf-head">
-        <RegisterPetals progress={progress} />
-        <h3 className="d3">Save your seat</h3>
-        <p className="rf-recap-line">
-          <b>{DATE_VALUE}</b> · <span>{TIME_VALUE}</span> · <span>{EVENT.durationLabel}</span> ·{' '}
-          <span>{EVENT.where}</span>
-        </p>
+        <div className="rf-head-row">
+          <p className="rf-eyebrow">Soul in Motion</p>
+        </div>
+
+        {/* The inline copy sits directly under §8's own "Save your seat"
+            heading, so it names the form instead of repeating that line —
+            three identical headings on one page tells a crawler nothing. */}
+        <h3 className="d3 rf-title">
+          {variant === 'inline' ? 'Your details' : 'Save your seat'}
+        </h3>
+
+        {/* One aligned block rather than a dot-separated run: three columns,
+            each label / value / qualifier on the same three baselines. */}
+        <dl className="rf-facts">
+          <RecapFacts />
+        </dl>
       </header>
 
       {/* honeypot: off-screen, unlabelled, never tabbable */}
@@ -147,159 +159,177 @@ export default function RegisterForm({ variant = 'modal', source = 'unknown', on
       </div>
 
       {/* ---------- 01 · you ---------- */}
-      <GroupHead group={GROUPS[0]} />
+      <section className="rf-sect">
+        <GroupHead group={GROUPS[0]} />
 
-      <div className="rf-grid">
-        <Field label="Full name" error={show('name')} htmlFor={fid('name')}>
-          <input
-            id={fid('name')}
-            type="text"
-            autoComplete="name"
-            maxLength={MAX.name}
-            placeholder="Shradha Saha"
-            value={values.name}
-            onChange={(e) => set('name', e.target.value)}
-            onBlur={() => blur('name')}
-            aria-invalid={Boolean(show('name'))}
-          />
-        </Field>
+        <div className="rf-rows">
+          <div className="rf-pair">
+            <Field label="Full name" error={show('name')} htmlFor={fid('name')}>
+              <input
+                id={fid('name')}
+                type="text"
+                autoComplete="name"
+                maxLength={MAX.name}
+                placeholder="Shradha Saha"
+                value={values.name}
+                onChange={(e) => set('name', e.target.value)}
+                onBlur={() => blur('name')}
+                aria-invalid={Boolean(show('name'))}
+              />
+            </Field>
 
-        <Field label="Email" error={show('email')} htmlFor={fid('email')} hint="The Zoom link goes here.">
-          <input
-            id={fid('email')}
-            type="email"
-            inputMode="email"
-            autoComplete="email"
-            maxLength={MAX.email}
-            placeholder="you@example.com"
-            value={values.email}
-            onChange={(e) => set('email', e.target.value)}
-            onBlur={() => blur('email')}
-            aria-invalid={Boolean(show('email'))}
-          />
-        </Field>
-      </div>
+            <Field label="Email" error={show('email')} htmlFor={fid('email')} hint="The Zoom link goes here.">
+              <input
+                id={fid('email')}
+                type="email"
+                inputMode="email"
+                autoComplete="email"
+                maxLength={MAX.email}
+                placeholder="you@example.com"
+                value={values.email}
+                onChange={(e) => set('email', e.target.value)}
+                onBlur={() => blur('email')}
+                aria-invalid={Boolean(show('email'))}
+              />
+            </Field>
+          </div>
 
-      <Field label="Phone" error={show('phone') || show('dial')} htmlFor={fid('phone')} hint="For the WhatsApp community invite.">
-        <div className="rf-phone">
-          <select
-            className="rf-dial rf-glass"
-            aria-label="Country code"
-            value={values.dial}
-            onChange={(e) => set('dial', e.target.value)}
+          <Field
+            label="Phone"
+            error={show('phone') || show('dial')}
+            htmlFor={fid('phone')}
+            hint="For the WhatsApp community invite."
           >
-            {DIAL_CODES.map((d) => (
-              <option key={d.code} value={d.code}>{d.label}</option>
-            ))}
-          </select>
-          <input
-            id={fid('phone')}
-            type="tel"
-            inputMode="tel"
-            autoComplete="tel-national"
-            maxLength={MAX.phone}
-            /* the example follows the country picker, so the field always shows
-               a number of the length it is about to ask for */
-            placeholder={dialFor(values.dial)?.sample ?? '98765 43210'}
-            value={values.phone}
-            onChange={(e) => set('phone', e.target.value)}
-            onBlur={() => blur('phone')}
-            aria-invalid={Boolean(show('phone'))}
-          />
+            <div className="rf-phone">
+              <select
+                className="rf-dial rf-glass"
+                aria-label="Country code"
+                value={values.dial}
+                /* switching country re-trims what is already typed, so the
+                   field can never sit holding more digits than the new code allows */
+                onChange={(e) => {
+                  const dial = e.target.value;
+                  setValues((prev) => ({ ...prev, dial, phone: clampNational(dial, prev.phone) }));
+                }}
+              >
+                {DIAL_CODES.map((d) => (
+                  <option key={d.code} value={d.code}>{d.label}</option>
+                ))}
+              </select>
+              <input
+                id={fid('phone')}
+                type="tel"
+                inputMode="tel"
+                autoComplete="tel-national"
+                maxLength={MAX.phone}
+                /* the example follows the country picker, so the field always shows
+                   a number of the length it is about to ask for */
+                placeholder={dialFor(values.dial)?.sample ?? '98765 43210'}
+                value={values.phone}
+                onChange={(e) => set('phone', clampNational(values.dial, e.target.value))}
+                onBlur={() => blur('phone')}
+                aria-invalid={Boolean(show('phone'))}
+              />
+            </div>
+          </Field>
         </div>
-      </Field>
+      </section>
 
       {/* ---------- 02 · where you are ---------- */}
-      <GroupHead group={GROUPS[1]} />
+      <section className="rf-sect">
+        <GroupHead group={GROUPS[1]} />
 
-      <div className="rf-grid">
-        <Field label="City" error={show('city')} htmlFor={fid('city')} hint="Pick one, or type your own.">
-          <RegisterCombo
-            id={fid('city')}
-            options={CITIES}
-            aliases={CITY_ALIASES}
-            placeholder="Pune"
-            autoComplete="address-level2"
-            maxLength={MAX.city}
-            value={values.city}
-            onChange={(v) => set('city', v)}
-            onBlur={() => blur('city')}
-            invalid={Boolean(show('city'))}
-          />
-        </Field>
-
-        <Field label="How did you hear?" error={show('heardFrom')} htmlFor={fid('heard')}>
-          <select
-            id={fid('heard')}
-            className="rf-select rf-glass"
-            value={values.heardFrom}
-            onChange={(e) => set('heardFrom', e.target.value)}
-            onBlur={() => blur('heardFrom')}
-            aria-invalid={Boolean(show('heardFrom'))}
-          >
-            <option value="" disabled>Choose one…</option>
-            {HEARD_FROM.map((h) => <option key={h} value={h}>{h}</option>)}
-          </select>
-        </Field>
-      </div>
-
-      <fieldset className="rf-group" aria-describedby={show('experience') ? fid('exp-err') : undefined}>
-        <legend className="rf-legend">Where are you with this work?</legend>
-        <div className="rf-choices">
-          {EXPERIENCE.map((opt) => (
-            <label
-              key={opt.value}
-              className={`rf-choice${values.experience === opt.value ? ' is-on' : ''}`}
-            >
-              <input
-                type="radio"
-                name={fid('experience')}
-                value={opt.value}
-                checked={values.experience === opt.value}
-                onChange={() => { set('experience', opt.value); blur('experience'); }}
-                aria-invalid={Boolean(show('experience'))}
+        <div className="rf-rows">
+          <div className="rf-pair">
+            <Field label="City" error={show('city')} htmlFor={fid('city')} hint="Pick one, or type your own.">
+              <RegisterCombo
+                id={fid('city')}
+                options={CITIES}
+                aliases={CITY_ALIASES}
+                placeholder="Pune"
+                autoComplete="address-level2"
+                maxLength={MAX.city}
+                value={values.city}
+                onChange={(v) => set('city', v)}
+                onBlur={() => blur('city')}
+                invalid={Boolean(show('city'))}
               />
-              <span className="rf-choice-mark" aria-hidden="true"><Check /></span>
-              <span className="rf-choice-body">
-                <b>{opt.label}</b>
-                <small>{opt.note}</small>
-              </span>
-            </label>
-          ))}
+            </Field>
+
+            <Field label="How did you hear?" error={show('heardFrom')} htmlFor={fid('heard')}>
+              <select
+                id={fid('heard')}
+                className="rf-select rf-glass"
+                value={values.heardFrom}
+                onChange={(e) => set('heardFrom', e.target.value)}
+                onBlur={() => blur('heardFrom')}
+                aria-invalid={Boolean(show('heardFrom'))}
+              >
+                <option value="" disabled>Choose one…</option>
+                {HEARD_FROM.map((h) => <option key={h} value={h}>{h}</option>)}
+              </select>
+            </Field>
+          </div>
+
+          <Field
+            label="Where are you with this work?"
+            error={show('experience')}
+            htmlFor={fid('experience')}
+            hint="Whichever is closest — it shapes how much is assumed on the day."
+          >
+            <select
+              id={fid('experience')}
+              className="rf-select rf-glass"
+              value={values.experience}
+              onChange={(e) => set('experience', e.target.value)}
+              onBlur={() => blur('experience')}
+              aria-invalid={Boolean(show('experience'))}
+            >
+              <option value="" disabled>Choose one…</option>
+              {EXPERIENCE.map((opt) => (
+                <option key={opt.value} value={opt.value}>{opt.label} — {opt.note}</option>
+              ))}
+            </select>
+          </Field>
         </div>
-        {show('experience') && <p className="rf-err" id={fid('exp-err')}>{show('experience')}</p>}
-      </fieldset>
+      </section>
 
       {/* ---------- 03 · what you bring ---------- */}
-      <GroupHead group={GROUPS[2]} optional />
+      <section className="rf-sect">
+        <GroupHead group={GROUPS[2]} optional />
 
-      <Field
-        label="One pattern you're curious about"
-        error={show('intention')}
-        htmlFor={fid('intention')}
-        hint="Shradha reads these before the session."
-      >
-        <textarea
-          id={fid('intention')}
-          rows={3}
-          maxLength={MAX.intention}
-          placeholder="The same argument keeps happening and I cannot see where it starts…"
-          value={values.intention}
-          onChange={(e) => set('intention', e.target.value)}
-          onBlur={() => blur('intention')}
-        />
-        <span className="rf-count-chars">{values.intention.length}/{MAX.intention}</span>
-      </Field>
+        <div className="rf-rows">
+          <Field
+            label="One pattern you're curious about"
+            error={show('intention')}
+            htmlFor={fid('intention')}
+            hint="Shradha reads these before the session."
+          >
+            <div className="rf-area">
+              <textarea
+                id={fid('intention')}
+                rows={3}
+                maxLength={MAX.intention}
+                placeholder="The same argument keeps happening and I cannot see where it starts…"
+                value={values.intention}
+                onChange={(e) => set('intention', e.target.value)}
+                onBlur={() => blur('intention')}
+              />
+              <span className="rf-count-chars">{values.intention.length}/{MAX.intention}</span>
+            </div>
+          </Field>
 
-      <label className={`rf-consent${values.consent ? ' is-on' : ''}`}>
-        <input
-          type="checkbox"
-          checked={values.consent}
-          onChange={(e) => set('consent', e.target.checked)}
-        />
-        <span className="rf-consent-box" aria-hidden="true"><Check /></span>
-        <span>Send me the Zoom link and a reminder before we start.</span>
-      </label>
+          <label className={`rf-consent${values.consent ? ' is-on' : ''}`}>
+            <input
+              type="checkbox"
+              checked={values.consent}
+              onChange={(e) => set('consent', e.target.checked)}
+            />
+            <span className="rf-consent-box" aria-hidden="true"><Check /></span>
+            <span>Send me the Zoom link and a reminder before we start.</span>
+          </label>
+        </div>
+      </section>
 
       {serverError && (
         <p className="rf-alert" role="alert">
@@ -330,6 +360,40 @@ export default function RegisterForm({ variant = 'modal', source = 'unknown', on
 
 /* ---------- pieces ---------- */
 
+/**
+ * The three facts, as a three-by-three block: label, value, and the qualifier
+ * that would otherwise have to be said again further down the panel. The date
+ * is split so the day-and-month carries the row and the weekday sits under it,
+ * which keeps all three values on one line in a third of the panel's width.
+ */
+function RecapFacts() {
+  const { weekday, dayMonth } = splitDate(DATE_VALUE);
+
+  /* The value leads and the qualifier follows it on the same line: the labels
+     the old block carried ("Date", "Time", "Where") said nothing a reader could
+     not already tell from "13th September" or "Live on Zoom", and they cost a
+     line each. Three facts, three lines, one strip. */
+  const facts = [
+    { k: 'Date', v: dayMonth, note: weekday },
+    { k: 'Time', v: TIME_VALUE, note: EVENT.durationLabel },
+    { k: 'Where', v: EVENT.where, note: EVENT.isFree ? 'Free' : '' },
+  ];
+
+  return (
+    <>
+      {facts.map((f) => (
+        <div className="rf-fact" key={f.k}>
+          <dt className="rf-fact-k">{f.k}</dt>
+          <dd>
+            <b>{f.v}</b>
+            {f.note && <span className="rf-fact-n">{f.note}</span>}
+          </dd>
+        </div>
+      ))}
+    </>
+  );
+}
+
 /** the hairline heading between movements: numeral, title, then a rule */
 function GroupHead({
   group, optional = false,
@@ -341,8 +405,8 @@ function GroupHead({
     <div className="rf-grouphead">
       <span className="rf-grouphead-n">{group.n}</span>
       <span className="rf-grouphead-t">{group.title}</span>
-      {optional && <span className="rf-grouphead-opt">Optional</span>}
       <span className="rf-grouphead-rule" aria-hidden="true" />
+      {optional && <span className="rf-grouphead-opt">Optional</span>}
     </div>
   );
 }
@@ -360,16 +424,20 @@ function Field({
     <div className={`rf-field${error ? ' has-err' : ''}`}>
       <label className="rf-label" htmlFor={htmlFor}>{label}</label>
       {children}
-      {error ? <p className="rf-err">{error}</p> : hint ? <p className="rf-hint">{hint}</p> : null}
+      {/* the slot is always present, so a field that grows a hint or an error
+          does not shove the field beside it out of alignment */}
+      <p className={`rf-note${error ? ' is-err' : ''}`} aria-hidden={error || hint ? undefined : true}>
+        {error || hint || '\u00A0'}
+      </p>
     </div>
   );
 }
 
 /**
- * Splits 'Sunday, 6th September' into its weekday and the rest, so the success
- * screen can set the day-and-month large and the weekday as a supporting line.
- * A date written without a comma stays whole rather than being cut at a guess,
- * and that includes the 'Announced soon' fallback.
+ * Splits 'Sunday, 13th September' into its weekday and the rest, so the recap
+ * and the welcome screen can set the day-and-month large and the weekday as a
+ * supporting line. A date written without a comma stays whole rather than
+ * being cut at a guess, and that includes the 'Announced soon' fallback.
  */
 function splitDate(value: string) {
   const i = value.indexOf(',');
@@ -378,88 +446,99 @@ function splitDate(value: string) {
     : { weekday: value.slice(0, i).trim(), dayMonth: value.slice(i + 1).trim() };
 }
 
-/** The screen after a successful write: the WhatsApp community is the one action. */
-function Success({ name }: { name: string }) {
+/** what happens between now and the session, in the order it happens */
+const NEXT_STEPS = [
+  {
+    title: 'Check your inbox',
+    text: 'The Zoom link is on its way, and a reminder follows before we start.',
+  },
+  {
+    title: 'Join the WhatsApp community',
+    text: 'The link, the reminder and the take-home material all land there.',
+  },
+  {
+    title: 'Bring one pattern',
+    text: 'One real situation you are curious about. That is the whole of the prep.',
+  },
+];
+
+/**
+ * The screen after a successful write. It is a welcome rather than a receipt:
+ * the community is the one action, the session time is the one thing to
+ * remember, and the three steps say what happens between now and then.
+ */
+function Welcome({ name }: { name: string }) {
   const { weekday, dayMonth } = splitDate(DATE_VALUE);
+  const cal = calendarLinks();
+
+  /* the WhatsApp step only stands as a step while there is a link behind it */
+  const steps = HAS_WHATSAPP ? NEXT_STEPS : NEXT_STEPS.filter((s) => !s.title.startsWith('Join'));
 
   return (
     <div className="rf rf--done">
-      <SeatedFigure />
-
-      <h3 className="d3 rf-done-title">
-        {name ? `Your seat is saved, ${name}.` : 'Your seat is saved.'}
-      </h3>
+      <header className="rf-done-head">
+        <span className="rf-crest" aria-hidden="true">
+          <img src="/green-leaves-logo.png" alt="" width={560} height={512} loading="lazy" decoding="async" />
+        </span>
+        <p className="rf-eyebrow rf-done-eyebrow">Welcome to the community</p>
+        <h3 className="d3 rf-done-title">
+          {name ? `Your seat is saved, ${name}.` : 'Your seat is saved.'}
+        </h3>
+        <p className="rf-done-lead">
+          You are on the list. Here is everything you need between now and the session.
+        </p>
+      </header>
 
       {/* The when, given the weight it actually carries. This is the one thing
           someone has to walk away remembering, so it is the largest thing on
           the screen after the confirmation itself — not a grey line of prose. */}
       <div className="rf-when">
-        <p className="rf-when-eyebrow">Your session</p>
+        <p className="rf-when-k">Your session</p>
         <p className="rf-when-date">{dayMonth}</p>
         <p className="rf-when-time">
           {weekday && <span className="rf-when-day">{weekday}</span>}
           {TIME_VALUE}
         </p>
         <div className="rf-when-meta">
-          <span><GlobeIcon /> {EVENT.where}</span>
           <span><ClockIcon /> {EVENT.durationLabel}</span>
+          <span><GlobeIcon /> {EVENT.where}</span>
         </div>
       </div>
 
-      <p className="rf-zoom">
-        <MailIcon /> The Zoom link is on its way to your inbox.
-      </p>
+      <ol className="rf-next">
+        {steps.map((s, i) => (
+          <li className="rf-next-step" key={s.title}>
+            <span className="rf-next-n" aria-hidden="true">{i + 1}</span>
+            <b>{s.title}</b>
+            <small>{s.text}</small>
+          </li>
+        ))}
+      </ol>
 
-      {HAS_WHATSAPP ? (
-        <>
-          <p className="rf-done-lead">
-            One last thing — the session runs out of our WhatsApp community. That is where the link,
-            the reminder and the take-home material land.
-          </p>
+      <footer className="rf-done-foot">
+        {HAS_WHATSAPP ? (
           <a className="btn btn--lg btn--block rf-wa" href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer">
             <WhatsAppGlyph />
             Join the WhatsApp community
           </a>
-        </>
-      ) : (
-        <p className="rf-done-lead">
-          Watch your inbox for the Zoom link — and keep an eye out for the WhatsApp community
-          invite, which is where the reminders go out.
-        </p>
-      )}
+        ) : (
+          <p className="rf-zoom">
+            <MailIcon /> Watch your inbox for the Zoom link — the WhatsApp community invite
+            follows, and that is where the reminders go out.
+          </p>
+        )}
+
+        {cal && (
+          <div className="rf-cal">
+            <span className="rf-cal-k">Add it to your calendar</span>
+            <span className="rf-cal-links">
+              <a href={cal.google} target="_blank" rel="noopener noreferrer">Google</a>
+              <a href={cal.ics} download="soul-in-motion.ics">Apple / Outlook</a>
+            </span>
+          </div>
+        )}
+      </footer>
     </div>
-  );
-}
-
-/**
- * A figure seated in the pose the session teaches, drawn on the same grid, the
- * same thin stroke and the same gold as the rest of the icon set. Hand-drawn
- * rather than dropped in from a stock library so the last screen still reads as
- * the page's own hand.
- */
-function SeatedFigure() {
-  return (
-    <svg className="rf-figure" viewBox="0 0 120 120" aria-hidden="true">
-      {/* the halo it sits in, carried over from the mandala it replaces */}
-      <circle className="rf-figure-ring" cx="60" cy="62" r="46" />
-      <circle className="rf-figure-ring" cx="60" cy="62" r="54" strokeDasharray="2 8" />
-
-      <circle cx="60" cy="30" r="9" />
-
-      {/* torso: shoulders down to the hips, drawn narrow so the arms read as
-          separate limbs rather than merging into one silhouette */}
-      <path d="M51.5 47.5c-1.8 7.5-2.4 15.4-2 23" />
-      <path d="M68.5 47.5c1.8 7.5 2.4 15.4 2 23" />
-      <path d="M51.5 47.5c2.6-2.6 5.4-3.9 8.5-3.9s5.9 1.3 8.5 3.9" />
-
-      {/* arms falling from each shoulder to rest on the knee below it */}
-      <path d="M51.8 48.6C44 53 38.2 59.6 34.6 68.4" />
-      <path d="M68.2 48.6C76 53 81.8 59.6 85.4 68.4" />
-
-      {/* crossed legs: knees wide at either side, shins folded in front */}
-      <path d="M49.5 70.5c-6.3.6-11.5 3.1-15.6 7.4-1.9 2-3.1 4.3-3.6 6.8 8.8 4.4 18.7 6.6 29.7 6.6s20.9-2.2 29.7-6.6c-.5-2.5-1.7-4.8-3.6-6.8-4.1-4.3-9.3-6.8-15.6-7.4" />
-      <path d="M44.6 84.2c4.6-4.6 9.7-6.9 15.4-6.9s10.8 2.3 15.4 6.9" />
-    </svg>
   );
 }
 

@@ -150,8 +150,8 @@ scripts/sheets-webhook.gs  the Apps Script that appends to the Sheet
 
 | File | Notes |
 |---|---|
-| `logo.png` | the mark with its ground keyed out and trimmed — sits on any surface |
-| `host.png` | portrait crop of the host shot, framed to leave the other event's banner out |
+| `emblem.png` | the lotus mark, used in the header, the footer and the share card |
+| `host.jpg` | portrait crop of the host shot, framed to leave the other event's banner out |
 
 `public/chakras/` — the seven discs, cropped from the source plate as circular
 PNGs with transparent corners. `lib/chakras.ts` carries name, English name,
@@ -168,6 +168,30 @@ node scripts/gen-chakras.mjs                         # optional vector redraw of
 All three use headless Chrome as the image processor, so nothing needs
 installing. Set `CHROME=/path/to/chrome` if it is not at the default macOS
 location.
+
+### The share card
+
+`public/og.jpg` is what WhatsApp, Facebook and X show when the page is shared —
+`lib/site.ts` points `OG_IMAGE` at it and `app/layout.tsx` feeds that to both
+the Open Graph and Twitter tags.
+
+```bash
+npm run og                                           # → public/og.jpg
+```
+
+It renders a 1200×630 card in headless Chrome using the real fonts and palette,
+so it cannot drift away from the page it advertises.
+
+**It carries no date, deliberately.** A share card is a picture with the text
+baked into it: a date on it goes stale silently — nothing fails, nothing looks
+wrong locally, and no test catches it, so the card just keeps advertising a
+session that already happened to everyone the link is forwarded to. Since the
+sessions repeat, that is a trap with no tripwire. Everything on the card is
+true of every run, so generate it once and leave it alone. The live date is on
+the page itself, one click away, where it comes from `lib/event.ts` and cannot
+be stale.
+
+Re-run it only if the brand mark, the headline or the palette changes.
 
 ## Dev helper
 

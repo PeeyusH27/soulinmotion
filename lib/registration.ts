@@ -191,6 +191,36 @@ export function nationalDigits(dial: string, phone: string) {
 }
 
 /**
+ * Trims typing to what the chosen country can actually hold: the national
+ * number is capped at that country's `max`, so +91 stops at ten digits rather
+ * than letting an eleventh be typed and only complaining on blur.
+ *
+ * Separators are kept — only digits past the limit are dropped — so a number
+ * typed as "98765 43210" is not cut short by the space, which is what a plain
+ * maxLength on the input would do.
+ */
+export function clampNational(dial: string, phone: string) {
+  const rule = dialFor(dial);
+  if (!rule) return phone;
+
+  let seen = 0;
+  let out = '';
+  // the trunk 0 people type out of habit is not part of the national number,
+  // so it must not eat one of the digits they are allowed
+  let leadingZero = rule.trunk;
+
+  for (const ch of phone) {
+    if (!/\d/.test(ch)) { out += ch; continue; }
+    if (leadingZero && ch === '0' && seen === 0) { out += ch; continue; }
+    leadingZero = false;
+    if (seen >= rule.max) continue;
+    seen += 1;
+    out += ch;
+  }
+  return out;
+}
+
+/**
  * Validates the whole record and returns one message per bad field. Callers
  * decide which of those messages to *show* — the form only surfaces errors for
  * the step you are on, the API route rejects on any of them.

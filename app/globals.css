@@ -318,6 +318,78 @@ section { position: relative; }
 .check-list .ck--no svg { stroke: var(--ink-3); stroke-width: 2; }
 .check-list--no li { font-weight: 500; color: var(--ink-2); }
 
+/* ============================================================
+   §2 PATTERNS — the copy, and the figure it is about
+
+   Wide: two columns, the picture holding the right one inside a frame
+   tinted with the section's own root hue so it sits in the page rather
+   than on it. Narrow: the column would be a dead band above the list,
+   so the same file becomes the section's ground at a tenth instead.
+   ============================================================ */
+.patterns-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr);
+  gap: clamp(var(--s-4), 3vw, var(--s-6));
+  align-items: center;
+}
+.patterns-copy { min-width: 0; }
+
+.patterns-art {
+  position: relative;
+  margin: 0;
+  min-width: 0;
+  border-radius: var(--r-card);
+  overflow: hidden;
+  /* the same hairline and lift the page's other cards carry */
+  box-shadow: var(--shadow-md), 0 0 0 1px var(--line);
+  isolation: isolate;
+}
+.patterns-art img {
+  width: 100%;
+  height: 100%;
+  /* tall on a wide screen, so the seated figure is never cropped at the waist */
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  object-position: 50% 32%;
+}
+/* the tint: the section's own root hue laid over the picture from the top-left,
+   the same corner .tint::before washes the heading from, so the two read as one
+   light rather than as a photograph with a filter dropped on it */
+.patterns-art::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(88% 78% at 8% 0%, color-mix(in srgb, var(--tint) 46%, transparent), transparent 68%),
+    linear-gradient(to top, color-mix(in srgb, var(--ink) 42%, transparent), transparent 46%);
+  mix-blend-mode: multiply;
+}
+
+/* the mobile ground: nothing until the columns collapse, then a tenth of the
+   same picture behind the whole section */
+.patterns-wash { display: none; }
+
+@media (max-width: 900px) {
+  .patterns-grid { grid-template-columns: 1fr; }
+  /* the figure is the ground now, so the column that held it goes away */
+  .patterns-art { display: none; }
+
+  .patterns-wash {
+    display: block;
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background: url('/meditating-bg.jpg') 50% 22% / cover no-repeat;
+    opacity: .10;
+    /* it fades out before the list ends so the smallest type on the section
+       never has to be read off the busiest part of the picture */
+    -webkit-mask-image: linear-gradient(to bottom, #000 0%, rgba(0, 0, 0, .6) 62%, transparent 100%);
+    mask-image: linear-gradient(to bottom, #000 0%, rgba(0, 0, 0, .6) 62%, transparent 100%);
+  }
+}
+
 /* the line that disqualifies, set apart from the list it follows */
 .not-for {
   margin-top: var(--s-3);
@@ -782,17 +854,30 @@ html.has-motion .reveal.is-in .icon-line rect, html.has-motion .reveal.is-in .ic
   padding-block: var(--s-2);
   border-bottom: 1px solid rgba(255, 255, 255, .12);
 }
-/* one leaf per step, in a soft gold holder that keeps the old discs' rhythm */
+/* one leaf per step, in a soft holder that keeps the old discs' rhythm. The
+   mark is the brand's own green, so the ring reads sage rather than gold —
+   a gold ring around a green mark is two accents arguing at 64px. */
 .step-leaf {
   width: 64px; height: 64px;
   display: grid; place-items: center;
   border-radius: 50%;
-  border: 1px solid rgba(232, 201, 128, .28);
-  background: rgba(232, 201, 128, .07);
+  border: 1px solid rgba(168, 183, 144, .3);
+  background: rgba(168, 183, 144, .09);
 }
-.step-leaf .icon-line { width: 36px; height: 36px; stroke: #E8C980; stroke-width: 1.35; }
-.step b { display: block; font-family: var(--display); font-size: var(--fs-h3); font-weight: 600; line-height: 1.1; letter-spacing: -.015em; }
-.step span { display: block; margin-top: 4px; font-size: var(--fs-sm); color: var(--on-ink-2); }
+.step-leaf img {
+  /* the artwork is trimmed to its own ink, so it is inset rather than filling
+     the disc edge to edge. Sized off the disc so the two stay in step at every
+     breakpoint, and nudged down by a hair: the mark's mass is in the leaves,
+     which puts its optical centre above the box it is drawn in. */
+  width: 56%; height: auto;
+  object-fit: contain;
+  transform: translateY(3%);
+}
+.step h3 { display: block; margin: 0; font-family: var(--display); font-size: var(--fs-h3); font-weight: 600; line-height: 1.1; letter-spacing: -.015em; }
+/* scoped to the text column: as a bare `.step span` this also matched the leaf
+   holder — one class more specific than `.step-leaf`, so it reset the disc to
+   display:block and the mark sat in its top-left corner instead of centred */
+.step > div > span { display: block; margin-top: 4px; font-size: var(--fs-sm); color: var(--on-ink-2); }
 /* the button holds its width, so the line beside it wraps underneath instead */
 .steps-cta { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-2) var(--s-3); padding-top: var(--s-4); }
 
@@ -1203,7 +1288,6 @@ html.has-motion .reveal.is-in { opacity: 1; transform: none; }
   .strip .btn { width: 100%; }
   .step { grid-template-columns: 52px 1fr; }
   .step-leaf { width: 52px; height: 52px; }
-  .step-leaf .icon-line { width: 29px; height: 29px; }
   .form-embed { height: 640px; }
   .final .btn { width: 100%; }
   .footer-top, .footer-base { flex-direction: column; align-items: center; text-align: center; }
@@ -1290,19 +1374,42 @@ html.has-motion .reveal.is-in { opacity: 1; transform: none; }
 }
 
 /* ============================================================
-   REGISTRATION — the form, themed off §1. It runs on ink for the
-   reason the hero does: the chakra hues are jewel tones and only
-   glow on a dark ground. Same three drifting orbs, same cream on
-   --ink, same hairlines, and gold for the action — which is what
-   gold already means everywhere else on this page.
+   REGISTRATION — the form and the welcome that follows it.
 
-   --step-c  the raw chakra hue for how far the form has got
-   --step-hue that hue lifted toward the paper tone so it reads on ink
+   Themed off §1 and unchanged in palette: cream on --ink, gold for
+   the action, mono for every label, Fraunces for every heading, and
+   the chakra hue tracking how far the form has got.
+
+   Rebuilt around one geometry so nothing has to be eyeballed:
+
+     --rf-pad    the panel's own inset — every edge, every surface
+     --rf-r      the control radius; --rf-r-lg for panels, +4
+     --rf-h      the control height every input, select and button shares
+     --step-c    the raw chakra hue for how far the form has got
+     --step-hue  that hue lifted toward the paper tone so it reads on ink
+
+   Vertical rhythm is 8-point and only three sizes: 8px inside a field,
+   16px between fields, 32px between movements.
    ============================================================ */
 
-/* ---------- the dialog shell ---------- */
+.rf,
+.rf-dialog,
+.form-card:has(.rf) {
+  --rf-pad: clamp(20px, 1.2rem + 1.4vw, 34px);
+  --rf-r: 12px;
+  --rf-r-lg: 16px;
+  --rf-h: 52px;
+  --rf-hair: rgba(243, 238, 227, .13);
+  --rf-edge: rgba(243, 238, 227, .38);
+  --rf-gold: #E8C980;
+}
+
+/* ============================================================
+   1. THE SHELL — dialog, inline card, and the ground they share
+   ============================================================ */
+
 .rf-dialog {
-  width: min(660px, calc(100vw - var(--s-3) * 2));
+  width: min(680px, calc(100vw - var(--s-3) * 2));
   max-height: min(90svh, 940px);
   padding: 0;
   border: 0;
@@ -1313,20 +1420,20 @@ html.has-motion .reveal.is-in { opacity: 1; transform: none; }
   color-scheme: dark;
 }
 .rf-dialog::backdrop {
-  background: rgba(12, 14, 9, .72);
-  backdrop-filter: blur(7px) saturate(.85);
+  background: rgba(12, 14, 9, .74);
+  backdrop-filter: blur(8px) saturate(.85);
 }
 .rf-dialog[open] { animation: rf-in var(--mid) var(--ease) both; }
 .rf-dialog[open]::backdrop { animation: rf-fade var(--mid) var(--ease) both; }
 .rf-dialog.is-closing { animation: rf-out 200ms var(--ease) both; }
 .rf-dialog.is-closing::backdrop { animation: rf-fade 200ms var(--ease) reverse both; }
 
-/* The confirmation is a short, self-contained popup rather than the tall panel
-   the form needs: narrower than the form's 660px so it is not mostly empty, and
-   centred at every width — including the phone sizes where the form deliberately
-   becomes a bottom sheet. :has, so the same dialog element carries both. */
+/* The welcome is a short, self-contained popup rather than the tall panel the
+   form needs: narrower than the form's 680px so it is not mostly empty, and
+   centred at every width — including the phone sizes where the form
+   deliberately becomes a bottom sheet. :has, so one dialog carries both. */
 .rf-dialog:has(.rf--done) {
-  width: min(460px, calc(100vw - var(--s-3) * 2));
+  width: min(520px, calc(100vw - var(--s-3) * 2));
   margin: auto;
 }
 
@@ -1344,56 +1451,69 @@ html.has-motion .reveal.is-in { opacity: 1; transform: none; }
   overflow: hidden;
   isolation: isolate;
 }
+
+/* ---- the ground: the meditating figure at a tenth, behind everything ----
+   It rides the shell rather than the form, so it holds still while the panel
+   scrolls — a background that slid with the fields would read as a bug. The
+   mask lets it fade out before the footer, so the sticky CTA always sits on
+   flat ink and the gold in the photo never fights the gold in the button. */
+.rf-dialog-inner::before,
+.form-card:has(.rf)::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: url('/meditating-bg.jpg') 50% 22% / cover no-repeat;
+  opacity: .10;
+  pointer-events: none;
+  /* one long fade rather than a short one: anything shorter leaves a visible
+     horizontal band across the panel where the photo stops */
+  -webkit-mask-image: linear-gradient(to bottom, #000 0%, rgba(0, 0, 0, .55) 68%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 0%, rgba(0, 0, 0, .55) 68%, transparent 100%);
+}
+
+/* everything the panel draws sits above that ground (.rf-close is absolute
+   and carries its own stacking, so it is deliberately not in this list) */
+.rf-dialog-inner > .rf,
+.form-card > .rf { position: relative; z-index: 1; }
+
 /* the heading the dialog is labelled by — the form draws its own visible one */
 .rf-dialog-title { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
 
 .rf-close {
   position: absolute;
   top: 14px; right: 14px;
-  z-index: 4;
+  z-index: 5;
   display: grid;
   place-items: center;
-  width: 40px; height: 40px;
+  width: 38px; height: 38px;
   border: 1px solid rgba(243, 238, 227, .2);
   border-radius: var(--r-pill);
-  background: rgba(243, 238, 227, .08);
-  color: var(--on-ink-2);
+  background: rgba(243, 238, 227, .12);
+  color: var(--on-ink);
   cursor: pointer;
-  backdrop-filter: blur(8px);
-  transition: background var(--fast), color var(--fast), transform var(--fast);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  transition: background var(--fast), color var(--fast), transform var(--fast), border-color var(--fast);
 }
 .rf-close:hover { background: var(--gold); border-color: var(--gold); color: #2A1E08; transform: rotate(90deg); }
-.rf-close svg { width: 16px; height: 16px; }
+.rf-close svg { width: 15px; height: 15px; stroke-width: 2.2; }
 
-/* ---------- the form ---------- */
-.rf {
-  --step-c: var(--root);
-  /* lifted toward the paper tone: root's #A7361D is all but invisible on --ink */
-  --step-hue: color-mix(in srgb, var(--step-c) 68%, var(--on-ink));
-  position: relative;
-  display: grid;
-  gap: var(--s-2);
-  isolation: isolate;
-  color: var(--on-ink);
+/* Cross, Check and LockIcon are drawn without a stroke of their own, so the
+   SVG default — black fill, no stroke — applies: it turns a tick into a filled
+   sliver and makes two crossed lines, which enclose no area, disappear. */
+.rf-close svg,
+.rf-consent-box svg,
+.rf-fine svg {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
-.rf--modal {
-  padding: var(--s-4) var(--card-pad) 0;
-  max-height: min(90svh, 940px);
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  scroll-behavior: smooth;
-}
-/* inline it sits inside .form-card, which takes the same ink treatment below */
-.rf--inline { padding: 0; }
-.rf--inline .rf-glow { z-index: -2; }
 
-/* ---------- §1's three drifting orbs ---------- */
+/* ---- §1's three drifting orbs, thinned: the photo now carries the light ---- */
 .rf-glow { position: absolute; inset: -12% -10% auto; height: 74%; z-index: 0; pointer-events: none; }
-/* it sits under everything the panel draws, but above the panel's own ground */
-.rf-dialog-inner > .rf { position: relative; z-index: 1; }
-/* §1 runs these at .26/.22/.18 behind blur(100px), but it spreads them over a
-   whole viewport. Packed into a 660px panel the same values read as a muddy
-   wash over the fields rather than as light, so they are thinner and softer. */
 .rf-glow i {
   position: absolute;
   width: 66%; aspect-ratio: 1;
@@ -1401,42 +1521,145 @@ html.has-motion .reveal.is-in { opacity: 1; transform: none; }
   filter: blur(92px);
   animation: orb 26s var(--ease) infinite alternate;
 }
-.rf-glow i:nth-child(1) { right: -10%; top: -26%; background: var(--gold); opacity: .17; }
-.rf-glow i:nth-child(2) { left: -24%; top: 4%; background: var(--clay); opacity: .13; animation-delay: -9s; }
-.rf-glow i:nth-child(3) { left: 26%; bottom: -50%; background: var(--sage); opacity: .09; animation-delay: -17s; }
+.rf-glow i:nth-child(1) { right: -10%; top: -26%; background: var(--gold); opacity: .13; }
+.rf-glow i:nth-child(2) { left: -24%; top: 4%; background: var(--clay); opacity: .09; animation-delay: -9s; }
+.rf-glow i:nth-child(3) { left: 26%; bottom: -50%; background: var(--sage); opacity: .07; animation-delay: -17s; }
 
-/* the mandala watermark, anchored to the top-right of whichever frame holds it */
-.rf-mandala {
-  position: absolute;
-  z-index: -1;
-  top: -60px; right: -70px;
-  width: 250px; height: 250px;
-  fill: none;
-  stroke: var(--step-hue);
-  stroke-width: 1;
-  opacity: .2;
-  pointer-events: none;
-  transition: stroke var(--slow) var(--ease), transform var(--cine) var(--ease);
+/* ---- the inline copy takes the same ink card ----
+   :has, so the google-mode fallback card keeps its paper styling */
+.form-card:has(.rf) {
+  position: sticky;
+  background: var(--ink);
+  border-color: rgba(243, 238, 227, .14);
+  color: var(--on-ink);
+  box-shadow: var(--shadow-lg);
+  padding: var(--rf-pad);
+  isolation: isolate;
 }
-.rf--inline .rf-mandala { top: -46px; right: -52px; width: 230px; height: 230px; }
-.rf--done .rf-mandala { transform: rotate(22deg) scale(1.06); opacity: .26; }
 
-/* ---------- head ---------- */
-.rf-head { display: grid; gap: 10px; margin-bottom: var(--s-1); }
-.rf .d3 { text-align: left; color: var(--on-ink); }
-.rf-recap-line {
-  font-size: var(--fs-sm);
+/* ============================================================
+   2. THE FORM
+   ============================================================ */
+
+.rf {
+  --step-c: var(--root);
+  /* lifted toward the paper tone: root's #A7361D is all but invisible on --ink */
+  --step-hue: color-mix(in srgb, var(--step-c) 68%, var(--on-ink));
+  position: relative;
+  display: grid;
+  /* the one gap between movements; everything smaller is set inside them */
+  gap: var(--s-4);
+  align-content: start;
+  isolation: isolate;
+  color: var(--on-ink);
+}
+.rf--modal {
+  padding: var(--rf-pad) var(--rf-pad) 0;
+  max-height: min(90svh, 940px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scroll-behavior: smooth;
+}
+/* inline it sits inside .form-card, which supplies the same inset */
+.rf--inline { padding: 0; }
+.rf--inline .rf-glow { z-index: -2; }
+
+/* ---------- masthead ---------- */
+.rf-head {
+  display: grid;
+  gap: var(--s-2);
+}
+/* the brand line, on its own row above the title */
+.rf-head-row {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  /* clears the close button: it ends 52px from the panel edge, and the row
+     already starts --rf-pad in, so this is only the difference plus a gap */
+  padding-right: max(0px, calc(60px - var(--rf-pad)));
+}
+.rf--inline .rf-head-row { padding-right: 0; }
+
+.rf-eyebrow {
+  font-family: var(--mono);
+  font-size: var(--fs-label);
+  font-weight: 500;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--rf-gold);
+  opacity: .9;
+}
+
+.rf .d3.rf-title {
+  text-align: left;
+  color: var(--on-ink);
+  line-height: 1.05;
+}
+
+/* ---- the three facts, as one compact strip ---- */
+/* Each fact is value + qualifier on a single line, the label reduced to a
+   hairline key at the left. Three lines of type instead of six, and no boxy
+   card competing with the fields below it. */
+.rf-facts {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0 var(--s-2);
+  margin: 0;
+  padding: 10px var(--s-2);
+  border: 1px solid var(--rf-hair);
+  border-radius: var(--rf-r);
+  background: rgba(243, 238, 227, .04);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+}
+/* key and value on one line: at three columns the strip is 3 lines tall, not 6 */
+.rf-fact {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: baseline;
+  gap: 0 8px;
+  min-width: 0;
+}
+.rf-fact + .rf-fact {
+  padding-left: var(--s-2);
+  border-left: 1px solid var(--rf-hair);
+}
+.rf-fact-k {
+  font-family: var(--mono);
+  font-size: .62rem;
+  font-weight: 500;
+  letter-spacing: .16em;
+  text-transform: uppercase;
   color: var(--on-ink-2);
-  text-wrap: balance;
+  opacity: .65;
 }
-/* the same gold the hero gives its last fact */
-.rf-recap-line b { color: #E8C980; font-weight: 700; }
-/* each fact holds together: without this "11:00 am IST" breaks after "11:00" */
-.rf-recap-line span { white-space: nowrap; }
+.rf-fact dd {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0 6px;
+  margin: 0;
+  min-width: 0;
+}
+.rf-fact dd b {
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  line-height: 1.25;
+  color: var(--rf-gold);
+  /* "11:00 am IST" must not break after "11:00" */
+  white-space: nowrap;
+}
+.rf-fact-n {
+  font-size: var(--fs-label);
+  font-weight: 500;
+  line-height: 1.3;
+  color: var(--on-ink-2);
+  opacity: .7;
+}
 
 /* ---------- the completion meter ---------- */
-.rf-petals { width: 132px; }
-.rf-petals svg { width: 100%; height: auto; overflow: visible; }
+.rf-petals { width: 108px; flex: none; }
+.rf-petals svg { width: 100%; height: auto; overflow: visible; display: block; }
 
 .rf-thread { fill: none; stroke: rgba(243, 238, 227, .18); stroke-width: 1.5; stroke-linecap: round; }
 .rf-thread--lit {
@@ -1471,49 +1694,77 @@ html.has-motion .reveal.is-in { opacity: 1; transform: none; }
   opacity: 0;
   transition: opacity var(--mid) var(--ease);
 }
-
 .rf-petal.is-now .rf-petal-fill  { opacity: .6; }
 .rf-petal.is-now .rf-petal-line  { stroke: var(--c-lit); stroke-width: 2; }
 .rf-petal.is-done .rf-petal-line { stroke: var(--c-lit); }
 .rf-petal.is-done .rf-petal-rib  { opacity: .5; }
 
-/* ---------- the heading between movements ---------- */
+/* ---------- a movement ---------- */
+.rf-sect { display: grid; gap: var(--s-2); align-content: start; }
+.rf-rows { display: grid; gap: var(--s-2); align-content: start; }
+/* two to a row where there is room; the pair always breaks together */
+.rf-pair { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s-2); align-items: start; }
+
 .rf-grouphead {
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin-top: var(--s-2);
+  gap: 12px;
   font-family: var(--mono);
   font-size: var(--fs-label);
   letter-spacing: .14em;
   text-transform: uppercase;
+  line-height: 1;
 }
-.rf-grouphead-n { color: var(--step-hue); font-weight: 600; transition: color var(--mid) var(--ease); }
-.rf-grouphead-t { color: var(--on-ink-2); font-weight: 500; }
+.rf-grouphead-n {
+  display: grid;
+  place-items: center;
+  width: 26px; height: 26px;
+  flex: none;
+  border: 1px solid color-mix(in srgb, var(--step-hue) 55%, transparent);
+  border-radius: var(--r-pill);
+  background: color-mix(in srgb, var(--step-hue) 15%, transparent);
+  font-size: .68rem;
+  font-weight: 600;
+  letter-spacing: .04em;
+  color: var(--step-hue);
+  transition: color var(--mid) var(--ease), border-color var(--mid) var(--ease), background var(--mid) var(--ease);
+}
+.rf-grouphead-t { color: var(--on-ink); font-weight: 600; }
+/* the hero's own hairline weight, taking the slack between title and tag */
+.rf-grouphead-rule { flex: 1; min-width: var(--s-2); border-top: 1px dashed rgba(243, 238, 227, .18); }
 .rf-grouphead-opt {
-  padding: 3px 9px;
+  flex: none;
+  padding: 4px 10px;
   border-radius: var(--r-pill);
   background: rgba(243, 238, 227, .1);
   color: var(--on-ink-2);
-  font-size: .68rem;
+  font-size: .64rem;
+  font-weight: 500;
   letter-spacing: .1em;
 }
-/* the hero's own hairline weight */
-.rf-grouphead-rule { flex: 1; border-top: 1px dashed rgba(243, 238, 227, .18); }
 
 /* ---------- fields ---------- */
-/* two to a row where there is room; the pair always breaks together */
-.rf-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s-2); align-items: start; }
-
-.rf-field { display: grid; gap: 7px; position: relative; align-content: start; }
+/* label / control / note, on the same three rows in every field, so two
+   fields side by side line up whether or not either of them has a note */
+.rf-field { display: grid; grid-template-rows: auto auto auto; gap: 8px; align-content: start; }
 .rf-label {
   font-family: var(--mono);
   font-size: var(--fs-label);
   font-weight: 500;
   letter-spacing: .12em;
   text-transform: uppercase;
+  line-height: 1.2;
   color: var(--on-ink-2);
 }
+.rf-note {
+  min-height: 1.35em;
+  font-size: var(--fs-label);
+  line-height: 1.35;
+  color: rgba(243, 238, 227, .56);
+}
+.rf-note.is-err { font-weight: 600; color: #F0A891; }
+/* the standalone error under the radio group has no reserved row to sit in */
+.rf-err { font-size: var(--fs-label); font-weight: 600; color: #F0A891; }
 
 .rf input[type="text"],
 .rf input[type="email"],
@@ -1521,29 +1772,36 @@ html.has-motion .reveal.is-in { opacity: 1; transform: none; }
 .rf textarea,
 .rf select {
   width: 100%;
-  min-height: 52px;
-  padding: 13px 16px;
-  /* .38, not the .18 the hero uses for decorative hairlines: a field's edge
-     is a control boundary and has to clear WCAG's 3:1, which .18 does not */
-  border: 1px solid rgba(243, 238, 227, .38);
-  border-radius: 14px;
-  background: rgba(243, 238, 227, .07);
+  min-height: var(--rf-h);
+  padding: 14px var(--s-2);
+  /* .38, not the .13 the panel uses for decorative hairlines: a field's edge
+     is a control boundary and has to clear WCAG's 3:1, which .13 does not */
+  border: 1px solid var(--rf-edge);
+  border-radius: var(--rf-r);
+  /* darker than the panel, not lighter: with a photograph behind the ground,
+     a translucent field would put type straight onto the picture. Recessed
+     wells keep every value on a settled surface at any point of the image. */
+  background: rgba(17, 20, 13, .44);
   color: var(--on-ink);
   font: inherit;
   font-size: var(--fs-sm);
+  line-height: 1.4;
   transition: border-color var(--fast), background var(--fast), box-shadow var(--fast);
 }
-.rf textarea { min-height: 96px; resize: vertical; line-height: 1.55; padding-bottom: 26px; }
-.rf ::placeholder { color: rgba(243, 238, 227, .52); opacity: 1; }
+.rf textarea { min-height: 104px; resize: vertical; line-height: 1.55; display: block; }
+.rf ::placeholder { color: rgba(243, 238, 227, .5); opacity: 1; }
 /* the select's popup is OS-drawn; these are the rows inside it */
 .rf select option { background: var(--ink); color: var(--on-ink); }
 
-.rf input:hover, .rf textarea:hover, .rf select:hover { border-color: rgba(243, 238, 227, .55); }
+.rf input:hover, .rf textarea:hover, .rf select:hover {
+  border-color: rgba(243, 238, 227, .55);
+  background: rgba(17, 20, 13, .5);
+}
 .rf input:focus, .rf textarea:focus, .rf select:focus {
   outline: none;
   border-color: var(--step-hue);
-  background: rgba(243, 238, 227, .09);
-  box-shadow: 0 0 0 4px color-mix(in srgb, var(--step-hue) 24%, transparent);
+  background: rgba(17, 20, 13, .58);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--step-hue) 26%, transparent);
 }
 /* Chrome paints autofilled fields near-white and ignores background — the
    inset shadow is the only way to keep them on the panel's ground. */
@@ -1559,21 +1817,28 @@ html.has-motion .reveal.is-in { opacity: 1; transform: none; }
 .rf-field.has-err textarea,
 .rf-field.has-err select { border-color: #E8836A; background: rgba(232, 131, 106, .12); }
 
-.rf-hint { font-size: var(--fs-label); color: rgba(243, 238, 227, .56); }
-.rf-err { font-size: var(--fs-label); font-weight: 600; color: #F0A891; }
+/* the counter is placed against the textarea, not the field, so it cannot
+   drift when the field grows a note underneath it */
+.rf-area { position: relative; display: grid; }
 .rf-count-chars {
-  position: absolute; right: 12px; bottom: 32px;
-  font-family: var(--mono); font-size: .7rem; color: rgba(243, 238, 227, .55);
+  position: absolute;
+  right: 12px; bottom: 10px;
+  padding: 2px 6px;
+  border-radius: 6px;
+  background: rgba(29, 33, 23, .72);
+  font-family: var(--mono); font-size: .68rem;
+  color: rgba(243, 238, 227, .6);
   pointer-events: none;
 }
 
-/* the native arrow is replaced with the page's own chevron */
+/* the native arrow is replaced with the page's own chevron, vertically
+   centred off the control height rather than a hard-coded offset */
 .rf select, .rf-select {
   appearance: none;
-  padding-right: 44px;
+  padding-right: 42px;
   background-image: linear-gradient(45deg, transparent 50%, var(--on-ink-2) 50%),
                     linear-gradient(135deg, var(--on-ink-2) 50%, transparent 50%);
-  background-position: calc(100% - 22px) 23px, calc(100% - 16px) 23px;
+  background-position: calc(100% - 22px) calc(50% + 1px), calc(100% - 16px) calc(50% + 1px);
   background-size: 6px 6px, 6px 6px;
   background-repeat: no-repeat;
   cursor: pointer;
@@ -1581,9 +1846,7 @@ html.has-motion .reveal.is-in { opacity: 1; transform: none; }
 
 /* ---------- glass: the controls you choose from ----------
    Text entry stays flat and the list controls are glass, so the two are
-   telling you something before you read the label. The blur is real work
-   here rather than decoration — the glow orbs sit behind the panel, so
-   these actually pick up the gold and clay bleeding through. */
+   telling you something before you read the label. */
 .rf .rf-glass {
   background: rgba(243, 238, 227, .1);
   border-color: rgba(243, 238, 227, .4);
@@ -1595,8 +1858,7 @@ html.has-motion .reveal.is-in { opacity: 1; transform: none; }
     0 10px 28px -18px rgba(0, 0, 0, .8);
 }
 /* scoped to the controls: as a bare .rf-glass:hover this also caught the
-   combobox popup — at (0,3,0) it outranked the popup's own ground and turned
-   it translucent exactly while the pointer was on it, i.e. while reading it */
+   combobox popup and turned it translucent exactly while it was being read */
 .rf input.rf-glass:hover,
 .rf select.rf-glass:hover { background: rgba(243, 238, 227, .14); border-color: rgba(243, 238, 227, .58); }
 .rf input.rf-glass:focus, .rf select.rf-glass:focus {
@@ -1610,14 +1872,14 @@ html.has-motion .reveal.is-in { opacity: 1; transform: none; }
 
 /* ---------- the city combobox ---------- */
 .rf-combo { position: relative; }
-.rf-combo-input { padding-right: 44px !important; }
+.rf-combo-input { padding-right: 42px !important; }
 
 .rf-combo-caret {
   position: absolute;
   top: 0; right: 0;
   display: grid;
   place-items: center;
-  width: 44px; height: 52px;
+  width: 42px; height: var(--rf-h);
   border: 0;
   background: none;
   cursor: pointer;
@@ -1643,14 +1905,12 @@ html.has-motion .reveal.is-in { opacity: 1; transform: none; }
   overflow-y: auto;
   overscroll-behavior: contain;
   border: 1px solid rgba(243, 238, 227, .4);
-  border-radius: 14px;
+  border-radius: var(--rf-r);
   list-style: none;
   animation: rf-combo-in 160ms var(--ease) both;
-  /* The inputs can sit at .1 because they only ever cover the panel. This
-     floats over arbitrary content — including the gold CTA — so it carries its
-     own near-opaque ground and lets the blur supply depth rather than contrast.
-     At .1 the option text over that button was unreadable. */
-  background: rgba(24, 27, 19, .93);
+  /* it floats over arbitrary content — including the gold CTA — so it carries
+     its own near-opaque ground and lets the blur supply depth, not contrast */
+  background: rgba(24, 27, 19, .95);
   -webkit-backdrop-filter: blur(20px) saturate(1.4);
   backdrop-filter: blur(20px) saturate(1.4);
   box-shadow:
@@ -1661,7 +1921,7 @@ html.has-motion .reveal.is-in { opacity: 1; transform: none; }
 
 .rf-combo-opt {
   padding: 10px 12px;
-  border-radius: 9px;
+  border-radius: 8px;
   font-size: var(--fs-sm);
   color: var(--on-ink);
   cursor: pointer;
@@ -1671,83 +1931,42 @@ html.has-motion .reveal.is-in { opacity: 1; transform: none; }
 .rf-combo-opt.is-chosen { color: var(--step-hue); font-weight: 700; }
 .rf-combo-opt.is-chosen.is-active { color: var(--on-ink); }
 
-.rf-phone { display: grid; grid-template-columns: 108px 1fr; gap: var(--s-1); }
-.rf-dial { background-position: calc(100% - 16px) 23px, calc(100% - 10px) 23px; padding-right: 30px; font-family: var(--mono); font-size: .82rem; }
-
-/* ---------- the experience choices ---------- */
-.rf-group { border: 0; margin: 0; padding: 0; display: grid; gap: 7px; }
-.rf-legend {
-  padding: 0;
+.rf-phone { display: grid; grid-template-columns: 112px 1fr; gap: var(--s-1); }
+.rf-dial {
+  padding-inline: 12px 28px;
+  background-position: calc(100% - 16px) calc(50% + 1px), calc(100% - 10px) calc(50% + 1px);
   font-family: var(--mono);
-  font-size: var(--fs-label);
-  font-weight: 500;
-  letter-spacing: .12em;
-  text-transform: uppercase;
-  color: var(--on-ink-2);
+  font-size: .82rem;
 }
-/* three across: on one panel a stacked list of three costs more height than
-   the choice is worth, and side by side they read as one question */
-.rf-choices { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--s-1); }
-.rf-choice {
-  display: grid;
-  gap: 8px;
-  align-content: start;
-  padding: 14px;
-  border: 1px solid rgba(243, 238, 227, .38);
-  border-radius: 14px;
-  background: rgba(243, 238, 227, .045);
-  cursor: pointer;
-  transition: border-color var(--fast), background var(--fast), transform var(--fast);
-}
-.rf-choice:hover { border-color: rgba(243, 238, 227, .55); transform: translateY(-2px); }
-.rf-choice input { position: absolute; opacity: 0; width: 0; height: 0; }
-.rf-choice:has(input:focus-visible) { outline: 3px solid var(--gold); outline-offset: 3px; }
-.rf-choice.is-on {
-  border-color: var(--step-hue);
-  background: color-mix(in srgb, var(--step-hue) 16%, transparent);
-}
-
-.rf-choice-mark {
-  display: grid; place-items: center;
-  width: 24px; height: 24px;
-  border: 1.5px solid rgba(243, 238, 227, .42);
-  border-radius: var(--r-pill);
-  background: transparent;
-  color: #1D2117;
-  transition: background var(--fast), border-color var(--fast);
-}
-.rf-choice-mark svg { width: 12px; height: 12px; opacity: 0; transform: scale(.5); transition: opacity var(--fast), transform var(--mid) var(--ease); }
-.rf-choice.is-on .rf-choice-mark { background: var(--step-hue); border-color: var(--step-hue); }
-.rf-choice.is-on .rf-choice-mark svg { opacity: 1; transform: scale(1); }
-
-.rf-choice-body b { display: block; font-size: var(--fs-sm); font-weight: 700; line-height: 1.3; color: var(--on-ink); }
-.rf-choice-body small { display: block; margin-top: 3px; font-size: var(--fs-label); color: var(--on-ink-2); line-height: 1.4; }
 
 /* ---------- consent ---------- */
 .rf-consent {
   display: grid;
-  grid-template-columns: 24px 1fr;
-  align-items: start;
+  grid-template-columns: 22px 1fr;
+  align-items: center;
   gap: 12px;
-  padding: 14px 16px;
-  border: 1px dashed rgba(243, 238, 227, .38);
-  border-radius: 14px;
+  padding: 14px var(--s-2);
+  border: 1px dashed var(--rf-edge);
+  border-radius: var(--rf-r);
+  background: rgba(17, 20, 13, .34);
   font-size: var(--fs-sm);
+  line-height: 1.4;
   color: var(--on-ink-2);
   cursor: pointer;
+  transition: border-color var(--fast), background var(--fast), color var(--fast);
 }
 .rf-consent input { position: absolute; opacity: 0; width: 0; height: 0; }
 .rf-consent:has(input:focus-visible) { outline: 3px solid var(--gold); outline-offset: 3px; }
 .rf-consent-box {
   display: grid; place-items: center;
-  width: 24px; height: 24px;
+  width: 22px; height: 22px;
   border: 1.5px solid rgba(243, 238, 227, .42);
   border-radius: 7px;
   background: transparent;
   color: #1D2117;
   transition: background var(--fast), border-color var(--fast);
 }
-.rf-consent-box svg { width: 13px; height: 13px; opacity: 0; transition: opacity var(--fast); }
+.rf-consent-box svg { width: 12px; height: 12px; opacity: 0; transition: opacity var(--fast); }
 /* sage lifted for the ink ground, the way the hero lifts its accents */
 .rf-consent.is-on {
   border-style: solid;
@@ -1758,19 +1977,19 @@ html.has-motion .reveal.is-in { opacity: 1; transform: none; }
 .rf-consent.is-on .rf-consent-box { background: #A8B790; border-color: #A8B790; }
 .rf-consent.is-on .rf-consent-box svg { opacity: 1; }
 
-/* ---------- errors, footer, buttons ---------- */
+/* ---------- errors and the action ---------- */
 .rf-alert {
   padding: 12px var(--s-2);
-  border-radius: 12px;
+  border-radius: var(--rf-r);
   border-left: 3px solid #E8836A;
   background: rgba(232, 131, 106, .16);
   color: #F5C4B4;
   font-size: var(--fs-sm);
   font-weight: 600;
 }
-.rf-alert a { color: #E8C980; text-decoration: underline; text-underline-offset: 3px; }
+.rf-alert a { color: var(--rf-gold); text-decoration: underline; text-underline-offset: 3px; }
 
-.rf-foot { display: grid; gap: var(--s-2); justify-items: center; margin-top: var(--s-1); }
+.rf-foot { display: grid; gap: 12px; justify-items: stretch; }
 /* The panel is taller than the dialog by design, so the action rides the
    bottom of the scroll area — on a long form it is the one thing that must
    never be the thing you go looking for. */
@@ -1778,8 +1997,9 @@ html.has-motion .reveal.is-in { opacity: 1; transform: none; }
   position: sticky;
   bottom: 0;
   z-index: 2;
-  margin: var(--s-1) calc(var(--card-pad) * -1) 0;
-  padding: var(--s-2) var(--card-pad) calc(var(--card-pad) + env(safe-area-inset-bottom, 0px));
+  margin-inline: calc(var(--rf-pad) * -1);
+  padding: var(--s-2) var(--rf-pad) calc(var(--rf-pad) + env(safe-area-inset-bottom, 0px));
+  border-top: 1px solid var(--rf-hair);
   background: var(--ink);
 }
 .rf--modal .rf-foot::before {
@@ -1816,29 +2036,60 @@ html.has-motion .reveal.is-in { opacity: 1; transform: none; }
 /* the honeypot: present for a bot, gone for everyone and everything else */
 .rf-trap { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
 
-/* ---------- the success screen ---------- */
+/* ============================================================
+   3. WELCOME TO THE COMMUNITY — the screen after a successful write
+   ============================================================ */
+
 .rf--done {
-  padding: var(--s-5) var(--card-pad) var(--card-pad);
-  justify-items: center;
+  padding: var(--rf-pad);
+  gap: var(--s-3);
   text-align: center;
-  gap: var(--s-2);
+}
+/* the panel is the scroller, not the shell: the meditating ground is painted
+   on the shell and has to hold still while a short window scrolls the content */
+.rf--modal.rf--done {
+  max-height: min(90svh, 940px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
 }
 .rf--inline.rf--done { padding: var(--s-4) 0; }
-.rf-done-title { text-align: center !important; color: var(--on-ink); }
-.rf-note { font-size: var(--fs-sm); color: var(--on-ink-2); }
-.rf-done-lead { font-size: var(--fs-sm); color: var(--on-ink-2); max-width: 42ch; }
 
-/* ---- the when: the largest thing on the screen after the confirmation ---- */
-/* A panel rather than a line of prose. Someone screenshots this to remember
+.rf-done-head { display: grid; justify-items: center; gap: 10px; }
+
+/* the brand mark in a halo, in place of the seated figure it replaces */
+.rf-crest {
+  display: grid;
+  place-items: center;
+  width: 76px; height: 76px;
+  margin-bottom: 2px;
+  border-radius: 50%;
+  border: 1px solid rgba(168, 183, 144, .34);
+  background: rgba(168, 183, 144, .1);
+  box-shadow: 0 0 0 8px rgba(168, 183, 144, .05);
+  animation: rf-crest var(--slow) var(--ease) both;
+}
+.rf-crest img { width: 44px; height: auto; }
+@keyframes rf-crest { from { opacity: 0; transform: scale(.86); } }
+
+.rf .rf-done-eyebrow { color: var(--rf-gold); }
+.rf .d3.rf-done-title { text-align: center; color: var(--on-ink); line-height: 1.08; }
+.rf-done-lead {
+  max-width: 40ch;
+  font-size: var(--fs-sm);
+  line-height: 1.55;
+  color: var(--on-ink-2);
+  text-wrap: balance;
+}
+
+/* ---- the when: the largest thing on the screen after the confirmation ----
+   A panel rather than a line of prose. Someone screenshots this to remember
    the time, so it has to survive being read at thumbnail size. */
 .rf-when {
-  width: 100%;
-  margin-top: var(--s-1);
-  padding: var(--s-3) var(--s-2);
   display: grid;
   justify-items: center;
-  gap: 6px;
-  border-radius: 18px;
+  gap: 5px;
+  padding: var(--s-3) var(--s-2);
+  border-radius: var(--rf-r-lg);
   border: 1px solid rgba(232, 201, 128, .26);
   /* the gold wash falls from the top edge so the date sits in the brightest
      part of the panel and the meta row fades into the card behind it */
@@ -1846,126 +2097,171 @@ html.has-motion .reveal.is-in { opacity: 1; transform: none; }
     radial-gradient(130% 150% at 50% -10%, rgba(214, 162, 74, .18), rgba(214, 162, 74, 0) 60%),
     rgba(243, 238, 227, .04);
 }
-
-.rf-when-eyebrow {
+.rf-when-k {
+  font-family: var(--mono);
   font-size: var(--fs-label);
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: .16em;
   text-transform: uppercase;
-  color: #E8C980;
+  color: var(--rf-gold);
   opacity: .85;
 }
-
 .rf-when-date {
+  margin-top: 2px;
   font-family: var(--display);
-  /* the minimum is set by "6th September" holding one line at 390px — the date
-     breaking in half is the one wrap this panel cannot afford */
-  font-size: clamp(1.75rem, 1.1rem + 2.7vw, 3.1rem);
+  /* the minimum is set by "13th September" holding one line at 360px — the
+     date breaking in half is the one wrap this panel cannot afford */
+  font-size: clamp(1.7rem, 1.05rem + 2.6vw, 2.9rem);
   font-weight: 600;
-  line-height: 1.03;
+  line-height: 1.05;
   letter-spacing: -.02em;
   color: var(--on-ink);
   text-wrap: balance;
 }
-
 .rf-when-time {
   font-family: var(--display);
-  /* likewise sized so "Sunday · 11:00 am IST" stays whole and does not orphan
-     the timezone onto a line of its own */
-  font-size: clamp(1.1rem, .92rem + 1.1vw, 1.9rem);
+  font-size: clamp(1.05rem, .9rem + 1vw, 1.6rem);
   font-weight: 500;
-  line-height: 1.2;
-  color: #E8C980;
+  line-height: 1.25;
+  color: var(--rf-gold);
 }
 /* the weekday leads the time on one line, dimmed so the clock time still wins */
 .rf-when-day { color: var(--on-ink-2); }
 .rf-when-day::after { content: ' · '; opacity: .6; }
 
 .rf-when-meta {
-  margin-top: 10px;
-  padding-top: 12px;
   width: 100%;
-  border-top: 1px solid rgba(243, 238, 227, .12);
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--rf-hair);
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 8px 20px;
+  gap: 6px 20px;
   font-size: var(--fs-sm);
   color: var(--on-ink-2);
 }
 .rf-when-meta span { display: inline-flex; align-items: center; gap: 7px; }
-.rf-when-meta svg { width: 16px; height: 16px; flex: none; opacity: .8; }
+.rf-when-meta svg { width: 16px; height: 16px; flex: none; opacity: .85; stroke: currentColor; stroke-width: 1.5; }
 
-/* the inbox promise: quieter than the panel, louder than fine print */
-.rf-zoom {
-  display: inline-flex;
-  align-items: flex-start;
-  gap: 8px;
-  font-size: var(--fs-sm);
-  color: var(--on-ink-2);
+/* ---- what happens next, in the order it happens ---- */
+.rf-next {
+  display: grid;
+  gap: var(--s-2);
+  margin: 0;
+  padding: 0;
   text-align: left;
+  counter-reset: none;
 }
-/* aligned to the first line rather than centred: on a narrow screen the text
-   takes two lines and a centred icon floats between them */
-.rf-zoom svg { width: 16px; height: 16px; flex: none; opacity: .8; margin-top: 3px; }
-
-/* The seated figure that closes the flow. Sized generously — it is the first
-   thing the eye lands on when the panel swaps from form to confirmation. */
-.rf-figure {
-  width: clamp(112px, 26vw, 140px);
-  height: auto;
-  fill: none;
-  stroke: #E8C980;
-  stroke-width: 1.7;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  animation: rf-fade var(--slow) var(--ease) both;
+.rf-next-step {
+  display: grid;
+  grid-template-columns: 26px 1fr;
+  align-items: center;
+  gap: 3px 12px;
 }
-/* the halo sits back so the figure itself carries the contrast */
-.rf-figure-ring { stroke: rgba(232, 201, 128, .3); stroke-width: 1; }
+.rf-next-n {
+  grid-row: 1 / span 2;
+  align-self: start;
+  display: grid; place-items: center;
+  width: 26px; height: 26px;
+  border: 1px solid rgba(232, 201, 128, .4);
+  border-radius: var(--r-pill);
+  background: rgba(232, 201, 128, .12);
+  font-family: var(--mono);
+  font-size: .72rem;
+  font-weight: 600;
+  line-height: 1;
+  color: var(--rf-gold);
+}
+.rf-next-step b { font-size: var(--fs-sm); font-weight: 700; line-height: 1.3; color: var(--on-ink); }
+.rf-next-step small { font-size: var(--fs-label); line-height: 1.45; color: var(--on-ink-2); }
 
-/* WhatsApp keeps its own green — a brand mark recoloured stops being a cue.
-   Squarer than a pill: at full width a 999px radius reads as a lozenge rather
-   than the single solid slab this screen's one action wants to be. */
+/* ---- the action, and the calendar underneath it ---- */
+.rf-done-foot { display: grid; gap: 14px; justify-items: stretch; }
+
+/* WhatsApp keeps its own green — a brand mark recoloured stops being a cue. */
 .rf-wa {
   background: #25D366; color: #06301A;
-  box-shadow: 0 14px 34px -14px rgba(37, 211, 102, .75);
-  border-radius: 16px;
+  box-shadow: 0 10px 26px -16px rgba(37, 211, 102, .5);
+  border-radius: var(--rf-r-lg);
   letter-spacing: -.01em;
   /* .btn keeps its label on one line and clips the overflow, which is right for
-     a short label but silently crops this one below ~430px. Wrapping to two
-     lines is the lesser evil: a cropped CTA reads as a rendering fault. */
+     a short label but silently crops this one below ~430px */
   white-space: normal;
   text-wrap: balance;
   min-width: 0;
   padding: 14px var(--s-3);
   line-height: 1.25;
 }
-.rf-wa:hover { background: #1FBE5B; box-shadow: 0 22px 44px -18px rgba(37, 211, 102, .85); }
+.rf-wa:hover { background: #1FBE5B; box-shadow: 0 16px 34px -18px rgba(37, 211, 102, .65); }
 .rf-wa .rf-wa-glyph { width: 21px; height: 21px; }
 .rf-wa:hover svg { transform: none; }
 
-/* ---------- the inline copy takes the same ink card ---------- */
-/* :has, so the google-mode fallback card keeps its paper styling */
-.form-card:has(.rf) {
-  background: var(--ink);
-  border-color: rgba(243, 238, 227, .14);
-  color: var(--on-ink);
-  box-shadow: var(--shadow-lg);
+.rf-cal {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 6px 12px;
+  font-size: var(--fs-label);
 }
+.rf-cal-k {
+  font-family: var(--mono);
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--on-ink-2);
+  opacity: .8;
+}
+.rf-cal-links { display: inline-flex; gap: 8px; }
+.rf-cal-links a {
+  padding: 5px 12px;
+  border: 1px solid var(--rf-hair);
+  border-radius: var(--r-pill);
+  color: var(--rf-gold);
+  font-weight: 600;
+  transition: border-color var(--fast), background var(--fast);
+}
+.rf-cal-links a:hover { border-color: rgba(232, 201, 128, .5); background: rgba(232, 201, 128, .1); }
 
-/* ---------- narrow: the pairs and the choices unstack ---------- */
-@media (max-width: 620px) {
-  .rf-grid { grid-template-columns: 1fr; }
-  .rf-choices { grid-template-columns: 1fr; }
-  .rf-choice { grid-template-columns: 24px 1fr; align-items: start; gap: 12px; }
+/* the inbox promise, when there is no community link to send people to */
+.rf-zoom {
+  display: inline-flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: var(--fs-sm);
+  line-height: 1.5;
+  color: var(--on-ink-2);
+  text-align: left;
 }
+/* aligned to the first line rather than centred: on a narrow screen the text
+   takes two lines and a centred icon floats between them */
+.rf-zoom svg { width: 16px; height: 16px; flex: none; opacity: .85; stroke: currentColor; stroke-width: 1.5; margin-top: 3px; }
+
+/* ============================================================
+   4. NARROW
+   ============================================================ */
 
 /* the inline copy sits in a narrower column than the dialog at most widths */
 @media (max-width: 1080px) {
-  .rf--inline .rf-grid { grid-template-columns: 1fr; }
-  .rf--inline .rf-choices { grid-template-columns: 1fr; }
-  .rf--inline .rf-choice { grid-template-columns: 24px 1fr; align-items: start; gap: 12px; }
+  /* the pair holds two-up here: at this width the inline column is still wide
+     enough for both, and breaking it early left half-rows of dead space */
+  .rf--inline .rf-pair { gap: var(--s-1); }
+  /* stacked, there is nothing beside it left to line up with */
+  .rf--inline .rf-note[aria-hidden="true"] { display: none; }
+}
+
+@media (max-width: 620px) {
+  .rf-pair { grid-template-columns: 1fr; }
+  .rf-note[aria-hidden="true"] { display: none; }
+  /* stacked, each fact becomes one line: key at the left, value beside it */
+  .rf-facts { grid-template-columns: 1fr; gap: 0; padding: 4px var(--s-2); }
+  .rf-fact {
+    grid-template-columns: 58px 1fr;
+    align-items: baseline;
+    gap: var(--s-1);
+    padding: 7px 0;
+  }
+  .rf-fact + .rf-fact { padding-left: 0; border-left: 0; border-top: 1px solid var(--rf-hair); }
 }
 
 /* ---------- small screens: the dialog becomes a sheet ---------- */
@@ -1981,26 +2277,40 @@ html.has-motion .reveal.is-in { opacity: 1; transform: none; }
   .rf-dialog[open] { animation: rf-sheet var(--mid) var(--ease) both; }
   @keyframes rf-sheet { from { opacity: 0; transform: translateY(40px); } }
 
-  /* the form is a sheet on a phone; the confirmation stays a centred popup */
+  /* the form is a sheet on a phone; the welcome stays a centred popup */
   .rf-dialog:has(.rf--done) {
-    width: min(460px, calc(100vw - var(--s-3) * 2));
-    max-width: min(460px, calc(100vw - var(--s-3) * 2));
+    width: min(520px, calc(100vw - var(--s-3) * 2));
+    max-width: min(520px, calc(100vw - var(--s-3) * 2));
+    max-height: 88svh;
     margin: auto;
     border-radius: var(--r-card);
   }
   .rf-dialog:has(.rf--done) .rf-dialog-inner { border-radius: var(--r-card); }
   .rf-dialog:has(.rf--done)[open] { animation: rf-in var(--mid) var(--ease) both; }
-  .rf--done { padding-bottom: calc(var(--card-pad) + env(safe-area-inset-bottom, 0px)); }
-  .rf-mandala { top: -46px; right: -70px; width: 200px; height: 200px; }
+  /* tightened so the WhatsApp button — the whole point of the screen — is
+     visible without scrolling on a 844px-tall phone */
+  .rf--modal.rf--done { max-height: 88svh; }
+  .rf--done {
+    gap: var(--s-2);
+    padding-bottom: calc(var(--rf-pad) + env(safe-area-inset-bottom, 0px));
+  }
+  .rf-crest { width: 54px; height: 54px; box-shadow: 0 0 0 6px rgba(168, 183, 144, .05); }
+  .rf-crest img { width: 31px; }
+  .rf-done-head { gap: 8px; }
+  .rf-done-foot { gap: 10px; }
+  .rf-when { padding: var(--s-2); }
+  .rf-when-meta { margin-top: 8px; padding-top: 8px; }
+  .rf-next { gap: 12px; }
+  .rf-done-lead { display: none; }
   .rf-glow i { filter: blur(56px); }
+  .rf-cal { flex-direction: column; gap: 8px; }
 }
 
 /* ---------- reduced motion ---------- */
 @media (prefers-reduced-motion: reduce) {
   .rf--modal { scroll-behavior: auto; }
-  .rf-dialog[open], .rf-dialog.is-closing, .rf-figure,
+  .rf-dialog[open], .rf-dialog.is-closing, .rf-crest,
   .rf-glow i { animation: none; }
-  .rf-mandala, .rf-thread--lit, .rf-petal-fill, .rf-petal-line, .rf-petal-rib,
-  .rf-choice, .rf-choice-mark svg { transition: none; }
+  .rf-thread--lit, .rf-petal-fill, .rf-petal-line, .rf-petal-rib,
   .rf-spin { animation-duration: 1.6s; }
 }

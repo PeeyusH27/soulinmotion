@@ -20,7 +20,7 @@ export default function Footer() {
         <div className="footer-top">
           <Link className="footer-brand" href="#home">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/brand/emblem.png" alt="" aria-hidden="true" />
+            <img src="/brand/emblem.png" alt="" aria-hidden="true" width={44} height={44} loading="lazy" decoding="async" />
             <span>
               <span className="brand-name">Soul in Motion</span>
               <span className="brand-tag">Transform from within</span>

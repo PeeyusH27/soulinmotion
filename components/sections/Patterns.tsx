@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import Headline from '../Headline';
 import { Check } from '../Icons';
 
@@ -16,12 +17,17 @@ const ITEMS = [
 export default function Patterns() {
   return (
     <section
-      className="sec tint"
+      className="sec tint patterns"
       id="about"
       style={{ '--tint': 'var(--root)', '--tint-x': '0%', '--tint-y': '0%' } as React.CSSProperties}
     >
-      <div className="wrap">
-        <div>
+      {/* Wide, this is the picture beside the copy. Narrow, the same file is the
+          section's own ground at a tenth — the column would otherwise become a
+          band of image nobody scrolls past on the way to the list. */}
+      <span className="patterns-wash" aria-hidden="true" />
+
+      <div className="wrap patterns-grid">
+        <div className="patterns-copy">
           <div className="sec-head reveal">
             <span className="kicker">Recognise yourself</span>
             <Headline text="This session is for you if…" mark={['you']} />
@@ -44,6 +50,18 @@ export default function Patterns() {
           </p>
         </div>
 
+        <figure className="patterns-art reveal" data-delay="2">
+          {/* The one true content image on the page, so it is the one that
+              earns next/image: AVIF/WebP and a srcset, instead of shipping a
+              1000px JPEG to a column that renders at ~430px. */}
+          <Image
+            src="/meditating-bg.jpg"
+            alt="A figure seated in meditation inside a lotus halo, lit from within"
+            width={1000}
+            height={1333}
+            sizes="(max-width: 900px) 100vw, 43vw"
+          />
+        </figure>
       </div>
     </section>
   );

@@ -198,8 +198,18 @@ export default function ChakraOrbit() {
             aria-label={`${c.name} — ${c.english} chakra`}
             aria-pressed={i === front}
           >
+            {/* Only the front disc reads on load; the six behind it are
+                decorative until the wheel turns, so they yield bandwidth. */}
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={c.file} alt="" draggable={false} />
+            <img
+              src={c.file}
+              alt=""
+              draggable={false}
+              width={c.size[0]}
+              height={c.size[1]}
+              fetchPriority={i === front ? 'high' : 'low'}
+              decoding="async"
+            />
           </button>
         ))}
       </div>

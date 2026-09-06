@@ -27,8 +27,8 @@ export const CHAKRAS: Chakra[] = [
     "petals": 4,
     "file": "/chakras/01-muladhara.png",
     "size": [
-      359,
-      362
+      254,
+      256
     ],
     "colors": {
       "light": "#A7361D",
@@ -46,8 +46,8 @@ export const CHAKRAS: Chakra[] = [
     "petals": 6,
     "file": "/chakras/02-svadhishthana.png",
     "size": [
-      362,
-      363
+      255,
+      256
     ],
     "colors": {
       "light": "#FB711D",
@@ -65,8 +65,8 @@ export const CHAKRAS: Chakra[] = [
     "petals": 10,
     "file": "/chakras/03-manipura.png",
     "size": [
-      362,
-      363
+      255,
+      256
     ],
     "colors": {
       "light": "#FFA824",
@@ -84,8 +84,8 @@ export const CHAKRAS: Chakra[] = [
     "petals": 12,
     "file": "/chakras/04-anahata.png",
     "size": [
-      360,
-      365
+      252,
+      256
     ],
     "colors": {
       "light": "#738A34",
@@ -103,8 +103,8 @@ export const CHAKRAS: Chakra[] = [
     "petals": 16,
     "file": "/chakras/05-vishuddha.png",
     "size": [
-      364,
-      365
+      255,
+      256
     ],
     "colors": {
       "light": "#3A7883",
@@ -122,8 +122,8 @@ export const CHAKRAS: Chakra[] = [
     "petals": 2,
     "file": "/chakras/06-ajna.png",
     "size": [
-      361,
-      364
+      254,
+      256
     ],
     "colors": {
       "light": "#614E74",
@@ -141,8 +141,8 @@ export const CHAKRAS: Chakra[] = [
     "petals": 1000,
     "file": "/chakras/07-sahasrara.png",
     "size": [
-      365,
-      370
+      252,
+      256
     ],
     "colors": {
       "light": "#9D648B",

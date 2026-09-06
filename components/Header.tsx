@@ -33,7 +33,7 @@ export default function Header() {
       <div className="wrap header-inner">
         <Link className="brand" href="#home" aria-label="Soul in Motion home" onClick={() => setOpen(false)}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/brand/emblem.png" alt="" aria-hidden="true" />
+          <img src="/brand/emblem.png" alt="" aria-hidden="true" width={44} height={44} decoding="async" />
           <span>
             <span className="brand-name">Soul in Motion</span>
             <span className="brand-tag">Transform from within</span>

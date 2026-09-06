@@ -69,28 +69,6 @@ export default function RegisterPetals({ progress, count = 3 }: Props) {
 }
 
 /**
- * The watermark behind the panel — a full eight-petal lotus over a faint
- * mandala ring. Purely decorative, and it stills under reduced motion.
- */
-export function RegisterMandala() {
-  const petals = Array.from({ length: 8 }, (_, i) => i * 45);
-  return (
-    <svg className="rf-mandala" viewBox="0 0 200 200" aria-hidden="true">
-      <circle cx="100" cy="100" r="86" />
-      <circle cx="100" cy="100" r="70" strokeDasharray="2 7" />
-      {petals.map((deg) => (
-        <path
-          key={deg}
-          d="M100 100C82 76 82 52 100 28c18 24 18 48 0 72z"
-          transform={`rotate(${deg} 100 100)`}
-        />
-      ))}
-      <circle cx="100" cy="100" r="9" />
-    </svg>
-  );
-}
-
-/**
  * §1's three drifting orbs — gold, clay, sage — the atmosphere the panel sits
  * in. It is rendered by whatever does NOT scroll: the dialog shell in the modal,
  * the card itself inline. Put it inside the scrolling form and it slides away,

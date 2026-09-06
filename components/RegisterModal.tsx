@@ -56,7 +56,9 @@ export default function RegisterModal() {
       onMouseDown={(e) => { if (e.target === ref.current) closeRegister(); }}
     >
       <div className="rf-dialog-inner">
-        {/* on the shell, not the form: the form is the scroller */}
+        {/* on the shell, not the form: the form is the scroller, and the
+            meditating ground behind it comes off .rf-dialog-inner for the
+            same reason — both have to hold still while the fields move */}
         <RegisterGlow />
         <h2 className="rf-dialog-title" id="rf-dialog-title">Save your seat</h2>
         <button type="button" className="rf-close" onClick={closeRegister} aria-label="Close">

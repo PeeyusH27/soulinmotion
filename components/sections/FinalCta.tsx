@@ -11,7 +11,7 @@ export default function FinalCta() {
     <section className="sec final on-ink" id="join">
       <div className="wrap reveal">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img className="disc" src={CROWN.file} alt="" aria-hidden="true" />
+        <img className="disc" src={CROWN.file} alt="" aria-hidden="true" width={CROWN.size[0]} height={CROWN.size[1]} loading="lazy" decoding="async" />
         <Headline text="Are you ready to see what’s really creating your reality?" mark={['reality?']} />
         <p className="lead">
           Ninety minutes, live, working on one pattern of your own.
