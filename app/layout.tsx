@@ -1,6 +1,7 @@
 import { Analytics } from '@vercel/analytics/next';
 import type { Metadata } from 'next';
 import { Fraunces, JetBrains_Mono, Manrope } from 'next/font/google';
+import Clarity from '@/components/Clarity';
 import Motion from '@/components/Motion';
 import RegisterProvider from '@/components/RegisterProvider';
 import StructuredData from '@/components/StructuredData';
@@ -90,6 +91,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </RegisterProvider>
         <StructuredData />
         <Analytics />
+        <Clarity />
       </body>
     </html>
   );
